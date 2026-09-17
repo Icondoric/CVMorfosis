@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "appName": "CV Harvard Builder",
+    "save": "Save",
+    "export": "Export PDF",
+    "language": "Language",
+    "template": "Template"
+  },
+  "templates": {
+    "classic": "Classic",
+    "modern": "Modern",
+    "compact": "Compact",
+    "elegant": "Elegant",
+    "elegant2": "Elegant 2"
+  },
+  "sections": {
+    "personal": "Personal Information",
+    "summary": "Professional Profile",
+    "education": "Education",
+    "experience": "Professional Experience",
+    "skills": "Skills",
+    "achievements": "Key Achievements",
+    "programs": "Programs & Software",
+    "languages": "Languages",
+    "publications": "Publications"
+  },
+  "fields": {
+    "fullName": "Full name",
+    "title": "Title / Position",
+    "email": "Email address",
+    "phone": "Phone number",
+    "location": "City, Country",
+    "linkedin": "LinkedIn (optional)",
+    "website": "Website (optional)",
+    "summary": "Write your professional profile...",
+    "institution": "Institution",
+    "degree": "Degree obtained",
+    "field": "Field of study",
+    "graduationDate": "Graduation date",
+    "honors": "Honors / Distinction (optional)",
+    "thesis": "Thesis (optional)",
+    "company": "Company",
+    "role": "Position / Role",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "present": "Present",
+    "location": "City",
+    "bulletPlaceholder": "Describe an achievement or responsibility...",
+    "skill": "Skill",
+    "skillPlaceholder": "e.g. Financial analysis",
+    "organization": "Organization",
+    "achievementTitle": "Achievement title",
+    "description": "Description",
+    "year": "Year",
+    "program": "Program / Software",
+    "languageName": "Language",
+    "languageLevel": "Proficiency level",
+    "authors": "Authors",
+    "pubTitle": "Publication title",
+    "journal": "Journal / Publisher",
+    "doi": "DOI (optional)"
+  },
+  "actions": {
+    "addExperience": "+ Add experience",
+    "addEducation": "+ Add education",
+    "addSkill": "+ Add skill",
+    "addAchievement": "+ Add achievement",
+    "addProgram": "+ Add program",
+    "addLanguage": "+ Add language",
+    "addPublication": "+ Add publication",
+    "addBullet": "+ Add bullet point",
+    "remove": "Remove",
+    "moveUp": "Move up",
+    "moveDown": "Move down"
+  },
+  "preview": {
+    "present": "Present",
+    "noContent": "Fill in the form to see the preview"
+  },
+  "export": {
+    "preparing": "Preparing PDF...",
+    "success": "PDF generated successfully",
+    "error": "Error generating PDF"
+  }
+}

@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+@import "tailwindcss";
+
+:root {
+  --font-serif: 'Lora', 'Times New Roman', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --color-accent: #1a365d; /* Harvard deep blue */
+  --color-accent-light: #2d5a8e;
+  --color-accent-modern: #c41e3a; /* Harvard crimson for modern template */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  @apply bg-gray-100 text-gray-900;
+}
+
+/* ── CV Preview (print-faithful rendering) ────────────────────────────────── */
+.cv-preview {
+  font-family: var(--font-serif);
+  background: white;
+  color: #111;
+  line-height: 1.45;
+}
+
+.cv-preview h1 {
+  font-family: var(--font-serif);
+  letter-spacing: 0.08em;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-gray-200;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded-full;
+}
+
+/* ── Editor form utilities ────────────────────────────────────────────────── */
+.form-input {
+  @apply w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white
+         focus:outline-none focus:ring-2 focus:ring-blue-900/30 focus:border-blue-900
+         placeholder:text-gray-300 transition-colors;
+}
+
+.form-input:disabled {
+  @apply bg-gray-50 text-gray-400 cursor-not-allowed;
+}
+
+.section-title {
+  @apply text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 pb-2 border-b border-gray-200;
+}
+
+.entry-card {
+  @apply bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3;
+}
+
+.entry-header {
+  @apply flex justify-between items-center;
+}
+
+.entry-index {
+  @apply text-xs font-bold text-[var(--color-accent)] bg-blue-50 w-6 h-6 rounded-full flex items-center justify-center;
+}
+
+.btn-remove {
+  @apply text-gray-400 hover:text-red-500 text-xs font-bold px-2 py-1 rounded transition-colors cursor-pointer;
+}
+
+.btn-add {
+  @apply w-full py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-sm
+         text-gray-400 hover:border-blue-900 hover:text-blue-900 transition-colors cursor-pointer;
+}

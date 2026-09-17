@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "appName": "CV Harvard Builder",
+    "save": "Guardar",
+    "export": "Exportar PDF",
+    "language": "Idioma",
+    "template": "Plantilla"
+  },
+  "templates": {
+    "classic": "Clásico",
+    "modern": "Moderno",
+    "compact": "Compacto",
+    "elegant": "Elegante",
+    "elegant2": "Elegante 2"
+  },
+  "sections": {
+    "personal": "Información Personal",
+    "summary": "Perfil Profesional",
+    "education": "Educación",
+    "experience": "Experiencia Profesional",
+    "skills": "Habilidades",
+    "achievements": "Logros Destacados",
+    "programs": "Programas y Software",
+    "languages": "Idiomas",
+    "publications": "Publicaciones"
+  },
+  "fields": {
+    "fullName": "Nombre completo",
+    "title": "Título / Cargo",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "location": "Ciudad, País",
+    "linkedin": "LinkedIn (opcional)",
+    "website": "Sitio web (opcional)",
+    "summary": "Escribe tu perfil profesional...",
+    "institution": "Institución",
+    "degree": "Título obtenido",
+    "field": "Área de estudio",
+    "graduationDate": "Fecha de graduación",
+    "honors": "Honores / Distinción (opcional)",
+    "thesis": "Tesis (opcional)",
+    "company": "Empresa",
+    "role": "Cargo",
+    "startDate": "Inicio",
+    "endDate": "Fin",
+    "present": "Presente",
+    "location": "Ciudad",
+    "bulletPlaceholder": "Describe un logro o responsabilidad...",
+    "skill": "Habilidad",
+    "skillPlaceholder": "Ej: Análisis financiero",
+    "organization": "Organización",
+    "achievementTitle": "Título del logro",
+    "description": "Descripción",
+    "year": "Año",
+    "program": "Programa / Software",
+    "languageName": "Idioma",
+    "languageLevel": "Nivel",
+    "authors": "Autores",
+    "pubTitle": "Título de la publicación",
+    "journal": "Revista / Editorial",
+    "doi": "DOI (opcional)"
+  },
+  "actions": {
+    "addExperience": "+ Agregar experiencia",
+    "addEducation": "+ Agregar educación",
+    "addSkill": "+ Agregar habilidad",
+    "addAchievement": "+ Agregar logro",
+    "addProgram": "+ Agregar programa",
+    "addLanguage": "+ Agregar idioma",
+    "addPublication": "+ Agregar publicación",
+    "addBullet": "+ Agregar punto",
+    "remove": "Eliminar",
+    "moveUp": "Subir",
+    "moveDown": "Bajar"
+  },
+  "preview": {
+    "present": "Presente",
+    "noContent": "Completa el formulario para ver la vista previa"
+  },
+  "export": {
+    "preparing": "Preparando PDF...",
+    "success": "PDF generado exitosamente",
+    "error": "Error al generar el PDF"
+  }
+}
