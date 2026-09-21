@@ -12,17 +12,18 @@
   <div
     class="cv-preview bg-white"
     style="
-      width: 794px;
-      min-height: 1123px;
+      width: 816px;
+      min-height: 1056px;
       font-family: 'Inter', 'Segoe UI', Arial, Helvetica, sans-serif;
       font-size: 10.5px;
       color: #2d2d2d;
-      padding: 0 56px 56px 56px;
+      padding: 0 54px 60px 54px;
+      box-sizing: border-box;
     "
   >
 
     <!-- ══════════════ MARGEN SUPERIOR EN BLANCO ══════════════ -->
-    <div style="height: 52px;"></div>
+    <div style="height: 46px;"></div>
 
     <!-- ══════════════ CABECERA ══════════════════════════════ -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
@@ -54,15 +55,11 @@
             text-transform: uppercase;
             letter-spacing: 0.04em;
             margin: 0 0 6px 0;
-            line-height: 1.1;
+            line-height: 1.15;
             color: #1a1a1a;
-          ">
-            <span v-if="nameParts.length > 1">
-              <span style="color: #1a1a1a;">{{ nameParts.slice(0, -1).join(' ') }}</span>
-              <span style="color: #1a1a1a;"> {{ nameParts[nameParts.length - 1] }}</span>
-            </span>
-            <span v-else style="color: #1a1a1a;">{{ cv.personal.fullName || 'NOMBRE APELLIDO' }}</span>
-          </h1>
+            word-break: normal;
+            overflow-wrap: normal;
+          ">{{ cv.personal.fullName || 'NOMBRE APELLIDO' }}</h1>
           <p v-if="cv.personal.title" style="
             font-size: 11px;
             font-weight: 400;
@@ -117,17 +114,19 @@
           :key="exp.id"
           :style="{ marginBottom: idx < cv.experience.length - 1 ? '14px' : '0' }"
         >
-          <!-- Nivel 1: Empresa -->
-          <p style="margin: 0 0 1px; font-weight: 700; color: #888; font-size: 10.5px;">
-            {{ exp.company }}<span v-if="exp.location" style="font-weight: 400; color: #aaa;"> — {{ exp.location }}</span>
-          </p>
-          <!-- Nivel 2: Cargo | Fechas -->
-          <p style="margin: 0 0 4px; font-weight: 700; color: #2d2d2d; font-size: 10.5px;">
-            {{ exp.role }}
-            <span v-if="exp.startDate || exp.endDate" style="font-weight: 400; color: #2d2d2d;">
-              &nbsp;|&nbsp;{{ exp.startDate }}<span v-if="exp.endDate"> – {{ exp.endDate }}</span>
-            </span>
-          </p>
+          <div class="cv2-entry-header">
+            <!-- Nivel 1: Empresa -->
+            <p style="margin: 0 0 1px; font-weight: 700; color: #888; font-size: 10.5px;">
+              {{ exp.company }}<span v-if="exp.location" style="font-weight: 400; color: #aaa;"> — {{ exp.location }}</span>
+            </p>
+            <!-- Nivel 2: Cargo | Fechas -->
+            <p style="margin: 0 0 4px; font-weight: 700; color: #2d2d2d; font-size: 10.5px;">
+              {{ exp.role }}
+              <span v-if="exp.startDate || exp.endDate" style="font-weight: 400; color: #2d2d2d;">
+                &nbsp;|&nbsp;{{ exp.startDate }}<span v-if="exp.endDate"> – {{ exp.endDate }}</span>
+              </span>
+            </p>
+          </div>
           <!-- Nivel 3: Descripción -->
           <ul v-if="exp.bullets.filter(b => b.trim()).length" style="margin: 0; padding-left: 14px; list-style-type: disc;">
             <li
@@ -150,15 +149,17 @@
           :key="edu.id"
           :style="{ marginBottom: idx < cv.education.length - 1 ? '14px' : '0' }"
         >
-          <!-- Nivel 1: Título -->
-          <p style="margin: 0 0 1px; font-weight: 700; color: #888; font-size: 10.5px;">{{ edu.degree }}<span v-if="edu.field"> — {{ edu.field }}</span></p>
-          <!-- Nivel 2: Institución (cursiva) | Fecha, Ciudad -->
-          <p style="margin: 0; font-size: 10.5px; color: #2d2d2d;">
-            <em>{{ edu.institution }}</em>
-            <span v-if="edu.graduationDate || edu.location">
-              &nbsp;|&nbsp;<span style="font-style: normal;">{{ edu.graduationDate }}<span v-if="edu.location">, {{ edu.location }}</span></span>
-            </span>
-          </p>
+          <div class="cv2-entry-header">
+            <!-- Nivel 1: Título -->
+            <p style="margin: 0 0 1px; font-weight: 700; color: #888; font-size: 10.5px;">{{ edu.degree }}<span v-if="edu.field"> — {{ edu.field }}</span></p>
+            <!-- Nivel 2: Institución (cursiva) | Fecha, Ciudad -->
+            <p style="margin: 0; font-size: 10.5px; color: #2d2d2d;">
+              <em>{{ edu.institution }}</em>
+              <span v-if="edu.graduationDate || edu.location">
+                &nbsp;|&nbsp;<span style="font-style: normal;">{{ edu.graduationDate }}<span v-if="edu.location">, {{ edu.location }}</span></span>
+              </span>
+            </p>
+          </div>
           <p v-if="edu.honors" style="margin: 2px 0 0; font-size: 9.5px; color: #888; font-style: italic;">{{ edu.honors }}</p>
           <p v-if="edu.thesis" style="margin: 2px 0 0; font-size: 9.5px; color: #666;">Tesis: <em>{{ edu.thesis }}</em></p>
         </div>
@@ -238,7 +239,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useCVStore } from '@/stores/cvStore'
 import { storeToRefs } from 'pinia'
@@ -246,43 +246,70 @@ import { storeToRefs } from 'pinia'
 const { t } = useI18n()
 const store = useCVStore()
 const { cv } = storeToRefs(store)
-
-const nameParts = computed(() =>
-  cv.value.personal.fullName.trim().split(' ').filter(Boolean)
-)
 </script>
 
 <style scoped>
-/* ── Two-column section row ──────────────────────────────────────────────── */
+/* ── Two-column section row — Flowing Block (permite saltos de página continuos) ── */
 .cv2-section {
-  display: flex;
-  gap: 0;
-  margin-bottom: 4px;
+  display: block;
+  position: relative;
+  break-inside: auto;
+  page-break-inside: auto;
+}
+.cv2-section::after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
-/* Left column: section title label — 22% width */
+/* Left column: section title label — 22% width floated left */
+/* padding-top aligns label baseline with first line of content text */
 .cv2-section-label {
+  float: left;
   width: 22%;
-  flex-shrink: 0;
-  padding-top: 1px;
-  padding-right: 18px;
-  font-size: 9px;
+  padding-top: 2px;
+  padding-right: 20px;
+  font-size: 8.5px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   color: #1a1a1a;
   line-height: 1.4;
+  break-after: avoid;
+  page-break-after: avoid;
 }
 
-/* Right column: content — 78% width */
+/* Right column: content — 78% width with margin-left */
 .cv2-section-body {
-  flex: 1;
-  padding-bottom: 18px;
+  margin-left: 22%;
+  break-inside: auto;
+  page-break-inside: auto;
+}
+.cv2-section-body > div {
+  break-inside: auto;
+  page-break-inside: auto;
+}
+.cv2-entry-header {
+  break-inside: avoid;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+li {
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
-/* Thin gray divider line — only spans the right (content) column */
+/*
+  Thin gray divider — only spans the right (content) column.
+  margin-top  = space between last content item and the line
+  margin-bottom = space between line and next section's content
+*/
 .cv2-divider {
-  border-top: 1px solid #d8d8d8;
-  margin-top: 14px;
+  clear: both;
+  border: none;
+  border-top: 1px solid #d0d0d0;
+  margin-top: 12px;
+  margin-bottom: 14px;
 }
 </style>
+

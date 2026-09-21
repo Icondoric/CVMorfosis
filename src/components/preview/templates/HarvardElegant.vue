@@ -5,10 +5,10 @@
     panel derecho con perfil, experiencia, habilidades e idiomas.
     Experiencia usa párrafo fluido (no bullets) con formato "Cargo | Fechas".
   -->
-  <div class="cv-preview bg-white" style="width:794px; min-height:1123px; font-family: 'Inter', system-ui, sans-serif; font-size: 11px; color: #1a1a1a; display:flex;">
+  <div class="cv-preview bg-white" style="width: 816px; min-height: 1056px; font-family: 'Inter', system-ui, sans-serif; font-size: 11px; color: #1a1a1a; display: flex; box-sizing: border-box;">
 
     <!-- ══ SIDEBAR IZQUIERDO ═══════════════════════════════════════════════ -->
-    <div style="width:240px; min-height:1123px; background:#2c3e50; color:white; padding:0; flex-shrink:0; display:flex; flex-direction:column;">
+    <div style="width: 246px; min-height: 1056px; background: #2c3e50; color: white; padding: 0; flex-shrink: 0; display: flex; flex-direction: column; box-sizing: border-box;">
 
       <!-- Header del sidebar: Nombre + cargo + contacto -->
       <div style="background:#1a252f; padding:36px 24px 28px;">

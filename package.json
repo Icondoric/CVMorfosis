@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "server": "tsx watch server/index.ts",
+    "server": "tsx server/index.ts",
     "dev:all": "concurrently -n vite,server -c cyan,yellow \"npm run dev\" \"npm run server\"",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",

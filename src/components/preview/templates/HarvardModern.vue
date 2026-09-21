@@ -1,6 +1,6 @@
 <template>
   <!-- Harvard Modern — colored accent header, clean sans-serif body -->
-  <div class="cv-preview bg-white" style="width:794px; min-height:1123px; font-family: 'Inter', system-ui, sans-serif; font-size: 11px; color: #1a1a1a;">
+  <div class="cv-preview bg-white" style="width: 816px; min-height: 1056px; font-family: 'Inter', system-ui, sans-serif; font-size: 11px; color: #1a1a1a; box-sizing: border-box;">
 
     <!-- ── Header with color band ─────────────────────────────────────────── -->
     <div style="background: #1a365d; color: white; padding: 36px 56px 28px; margin-bottom: 0;">
@@ -135,5 +135,11 @@ const { cv } = storeToRefs(store)
   border-bottom: 2px solid #1a365d;
   padding-bottom: 4px;
   margin-bottom: 10px;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+li {
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 </style>

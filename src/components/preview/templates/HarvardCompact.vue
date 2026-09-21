@@ -1,9 +1,9 @@
 <template>
   <!-- Harvard Compact — two-column layout: sidebar left, main content right -->
-  <div class="cv-preview bg-white" style="width:794px; min-height:1123px; font-family: 'Inter', system-ui, sans-serif; font-size: 10.5px; color: #111; display:flex;">
+  <div class="cv-preview bg-white" style="width: 816px; min-height: 1056px; font-family: 'Inter', system-ui, sans-serif; font-size: 10.5px; color: #111; display: flex; box-sizing: border-box;">
 
     <!-- ── Left sidebar ────────────────────────────────────────────────────── -->
-    <div style="width:220px; min-height:1123px; background:#1a365d; color:white; padding:32px 20px; flex-shrink:0;">
+    <div style="width: 230px; min-height: 1056px; background: #1a365d; color: white; padding: 36px 22px; flex-shrink: 0; box-sizing: border-box;">
       <h1 style="font-size:16px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin:0 0 4px 0; color:white; line-height:1.3;">
         {{ cv.personal.fullName || 'NOMBRE' }}
       </h1>

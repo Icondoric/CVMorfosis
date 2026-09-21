@@ -8,13 +8,24 @@ export function usePDFExport() {
   async function exportPDF(element: HTMLElement, filename: string = 'cv-harvard') {
     isExporting.value = true
     try {
-      // Send the inner HTML of the CV element to Puppeteer backend
-      // Puppeteer renders it in headless Chrome → perfect CSS support (oklch, fonts, etc.)
+      // ── Collect ALL styles from the document head ─────────────────────────
+      // This is critical: Vue scoped styles (.foo[data-v-XXXX]) live in <head>
+      // not in the element's outerHTML. Without them, Puppeteer renders unstyled.
+      const allStyles = Array.from(document.querySelectorAll('style'))
+        .map(s => s.innerHTML)
+        .join('\n')
+
+      // Also pick up any <link rel="stylesheet"> hrefs (production build)
+      const linkedStyles = Array.from(
+        document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')
+      ).map(l => `@import url("${l.href}");`).join('\n')
+
       const response = await fetch(PDF_SERVER, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          html: element.outerHTML,
+          html:    element.outerHTML,
+          styles:  linkedStyles + '\n' + allStyles,
           filename,
         }),
       })
@@ -24,13 +35,12 @@ export function usePDFExport() {
         throw new Error(`Server error ${response.status}: ${err.detail ?? err.error ?? 'unknown'}`)
       }
 
-      // Download the returned PDF blob
       const blob = await response.blob()
       const url  = URL.createObjectURL(blob)
       const link = document.createElement('a')
-      const safeName = filename.replace(/[^a-z0-9_\-]/gi, '_').toLowerCase()
+      const safe = filename.replace(/[^a-z0-9_-]/gi, '_').toLowerCase()
       link.href     = url
-      link.download = `${safeName}.pdf`
+      link.download = `${safe}.pdf`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
