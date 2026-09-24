@@ -15,10 +15,10 @@
           <input v-model="item.year" type="text" class="form-input" placeholder="2018" />
         </FormField>
         <FormField :label="t('fields.achievementTitle')" class="col-span-2" required>
-          <input v-model="item.title" type="text" class="form-input" placeholder="Reconocimiento como Líder en Innovación" />
+          <AutoExpandTextarea v-model="item.title" :min-rows="1" placeholder="Reconocimiento como Líder en Innovación" />
         </FormField>
         <FormField :label="t('fields.description')" class="col-span-2">
-          <textarea v-model="item.description" rows="2" class="form-input resize-none" placeholder="Descripción del logro..." />
+          <AutoExpandTextarea v-model="item.description" :min-rows="2" placeholder="Descripción del logro..." />
         </FormField>
       </div>
     </div>
@@ -34,6 +34,7 @@ import { useI18n } from 'vue-i18n'
 import { useCVStore } from '@/stores/cvStore'
 import { storeToRefs } from 'pinia'
 import FormField from '@/components/ui/FormField.vue'
+import AutoExpandTextarea from '@/components/ui/AutoExpandTextarea.vue'
 
 const { t } = useI18n()
 const store = useCVStore()

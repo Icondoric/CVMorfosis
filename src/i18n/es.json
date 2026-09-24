@@ -1,6 +1,6 @@
 {
   "nav": {
-    "appName": "CV Harvard Builder",
+    "appName": "CVMorfosis",
     "save": "Guardar",
     "export": "Exportar PDF",
     "language": "Idioma",
@@ -11,7 +11,8 @@
     "modern": "Moderno",
     "compact": "Compacto",
     "elegant": "Elegante",
-    "elegant2": "Elegante 2"
+    "elegant2": "Elegante 2",
+    "wave": "Ondas"
   },
   "sections": {
     "personal": "Información Personal",

@@ -53,26 +53,27 @@
 
       <!-- Bullets -->
       <div class="mt-3 space-y-2">
-        <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Responsabilidades / Logros</label>
+        <label class="text-[12px] font-medium text-[var(--apple-text-secondary)] uppercase tracking-wide">Responsabilidades / Logros</label>
         <div
           v-for="(bullet, bIdx) in entry.bullets"
           :key="bIdx"
-          class="flex gap-2"
+          class="flex gap-2 items-start"
         >
-          <span class="mt-2.5 text-gray-400 text-sm">•</span>
-          <input
+          <span class="mt-2.5 text-gray-400 text-sm flex-shrink-0">•</span>
+          <AutoExpandTextarea
             v-model="entry.bullets[bIdx]"
-            type="text"
-            class="form-input flex-1"
+            :min-rows="1"
+            class="flex-1"
             :placeholder="t('fields.bulletPlaceholder')"
           />
           <button
             @click="store.removeBullet(entry.id, bIdx)"
-            class="mt-2 text-gray-400 hover:text-red-500 text-xs px-1"
+            class="mt-2 text-gray-400 hover:text-red-500 text-xs px-1.5 py-1 rounded hover:bg-red-50 flex-shrink-0"
+            title="Eliminar viñeta"
           >✕</button>
         </div>
-        <button @click="store.addBullet(entry.id)" class="text-xs text-[var(--color-accent)] hover:underline">
-          {{ t('actions.addBullet') }}
+        <button @click="store.addBullet(entry.id)" class="text-xs text-[var(--apple-blue)] font-medium hover:underline flex items-center gap-1 mt-1">
+          + {{ t('actions.addBullet') }}
         </button>
       </div>
     </div>
@@ -89,6 +90,7 @@ import { useCVStore } from '@/stores/cvStore'
 import { storeToRefs } from 'pinia'
 import type { ExperienceEntry } from '@/types/cv.types'
 import FormField from '@/components/ui/FormField.vue'
+import AutoExpandTextarea from '@/components/ui/AutoExpandTextarea.vue'
 
 const { t, locale } = useI18n()
 const store = useCVStore()

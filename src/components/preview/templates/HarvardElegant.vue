@@ -28,20 +28,20 @@
       <!-- Contacto -->
       <div style="padding:20px 24px; border-bottom:1px solid rgba(255,255,255,0.1);">
         <div class="sidebar-label">Contacto</div>
-        <div v-if="cv.personal.phone" style="margin-bottom:6px; font-size:9.5px; color:#c8dae4; display:flex; align-items:flex-start; gap:6px;">
-          <span style="opacity:0.6; flex-shrink:0;">📞</span>
+        <div v-if="cv.personal.phone" style="margin-bottom:6px; font-size:9.5px; color:#c8dae4; display:flex; align-items:center; gap:6px;">
+          <svg style="width:11px; height:11px; flex-shrink:0; opacity:0.7;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           <span>{{ cv.personal.phone }}</span>
         </div>
-        <div v-if="cv.personal.location" style="margin-bottom:6px; font-size:9.5px; color:#c8dae4; display:flex; align-items:flex-start; gap:6px;">
-          <span style="opacity:0.6; flex-shrink:0;">📍</span>
+        <div v-if="cv.personal.location" style="margin-bottom:6px; font-size:9.5px; color:#c8dae4; display:flex; align-items:center; gap:6px;">
+          <svg style="width:11px; height:11px; flex-shrink:0; opacity:0.7;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           <span>{{ cv.personal.location }}</span>
         </div>
         <div v-if="cv.personal.email" style="margin-bottom:6px; font-size:9px; color:#c8dae4; display:flex; align-items:flex-start; gap:6px; word-break:break-all;">
-          <span style="opacity:0.6; flex-shrink:0;">✉</span>
+          <svg style="width:11px; height:11px; flex-shrink:0; opacity:0.7; margin-top:2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           <span>{{ cv.personal.email }}</span>
         </div>
         <div v-if="cv.personal.linkedin" style="font-size:8.5px; color:#a8c4d4; display:flex; align-items:flex-start; gap:6px; word-break:break-all;">
-          <span style="opacity:0.6; flex-shrink:0;">🔗</span>
+          <svg style="width:11px; height:11px; flex-shrink:0; opacity:0.7; margin-top:1px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
           <span>{{ cv.personal.linkedin }}</span>
         </div>
       </div>

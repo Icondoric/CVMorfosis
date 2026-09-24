@@ -16,7 +16,7 @@
           <input v-model="pub.year" type="text" class="form-input" placeholder="2023" />
         </FormField>
         <FormField :label="t('fields.pubTitle')" class="col-span-2" required>
-          <input v-model="pub.title" type="text" class="form-input" placeholder="Título del artículo o libro" />
+          <AutoExpandTextarea v-model="pub.title" :min-rows="1" placeholder="Título del artículo o libro" />
         </FormField>
         <FormField :label="t('fields.journal')" required>
           <input v-model="pub.journal" type="text" class="form-input" placeholder="Journal of Finance" />
@@ -36,6 +36,7 @@ import { useI18n } from 'vue-i18n'
 import { useCVStore } from '@/stores/cvStore'
 import { storeToRefs } from 'pinia'
 import FormField from '@/components/ui/FormField.vue'
+import AutoExpandTextarea from '@/components/ui/AutoExpandTextarea.vue'
 
 const { t } = useI18n()
 const store = useCVStore()

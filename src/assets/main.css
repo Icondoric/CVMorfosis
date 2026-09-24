@@ -1,12 +1,34 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
 @import "tailwindcss";
 
 :root {
+  /* ── Apple Design System Colors ────────────────────────────────────────── */
+  --apple-blue: #0071E3;
+  --apple-blue-hover: #0077ED;
+  --apple-blue-active: #0062C4;
+  --apple-green: #34C759;
+  --apple-green-hover: #2DB84D;
+  --apple-amber: #FF9500;
+  --apple-red: #FF3B30;
+  --apple-purple: #AF52DE;
+
+  /* ── Apple Surfaces & Grays (WCAG 2.1 Compliant Ratios) ─────────────────── */
+  --apple-bg: #F5F5F7;                 /* Apple standard canvas */
+  --apple-surface: #FFFFFF;            /* Pure white surface */
+  --apple-surface-secondary: #FBFBFD;  /* Elevated subtle surface */
+  --apple-text-primary: #1D1D1F;        /* Deep graphite (Contrast 16:1) */
+  --apple-text-secondary: #56565A;      /* Darkened neutral gray (Contrast > 5.5:1) */
+  --apple-text-tertiary: #6E6E73;       /* Accessible muted gray (Contrast > 4.5:1) */
+  --apple-border: rgba(0, 0, 0, 0.08);  /* Subtle boundary */
+  --apple-border-light: rgba(0, 0, 0, 0.04);
+  --apple-fill-quaternary: rgba(0, 0, 0, 0.04);
+  --apple-fill-tertiary: rgba(0, 0, 0, 0.06);
+
+  /* ── Typography & Accents ──────────────────────────────────────────────── */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", system-ui, sans-serif;
   --font-serif: 'Lora', 'Times New Roman', Georgia, serif;
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --color-accent: #1a365d; /* Harvard deep blue */
-  --color-accent-light: #2d5a8e;
-  --color-accent-modern: #c41e3a; /* Harvard crimson for modern template */
+  --color-accent: var(--apple-blue);
+  --color-accent-light: var(--apple-blue-hover);
+  --color-accent-modern: #1a365d;
 }
 
 * {
@@ -15,15 +37,130 @@
 
 body {
   font-family: var(--font-sans);
-  @apply bg-gray-100 text-gray-900;
+  background-color: var(--apple-bg);
+  color: var(--apple-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Accessibility: High-Visibility Focus Outline ────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--apple-blue);
+  outline-offset: 2px;
+}
+
+/* ── Apple Micro-Interactions & Buttons (apple-design §1, §4) ────────────── */
+.apple-btn {
+  user-select: none;
+  cursor: pointer;
+  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.16s ease,
+              border-color 0.16s ease,
+              box-shadow 0.16s ease,
+              opacity 0.16s ease;
+}
+
+.apple-btn:active:not(:disabled) {
+  transform: scale(0.965);
+}
+
+/* ── Mobile Touch Targets (WCAG 2.5.5 / Apple HIG: 44x44px minimum) ──────── */
+@media (pointer: coarse) {
+  button,
+  .apple-btn,
+  .apple-segmented-item,
+  a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+/* ── Apple Translucent Glass (apple-design §12) ──────────────────────────── */
+.apple-glass {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* ── Apple Card / Grouped surface ────────────────────────────────────────── */
+.apple-card {
+  background: var(--apple-surface);
+  border: 1px solid var(--apple-border);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.02);
+  transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+
+.apple-card:hover {
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* ── Apple Segmented Control Track & Pill ────────────────────────────────── */
+.apple-segmented-track {
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 9999px;
+  padding: 3px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.apple-segmented-item {
+  border-radius: 9999px;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 640px) {
+  .apple-segmented-item {
+    font-size: 14px;
+  }
+}
+
+.apple-segmented-item.active {
+  background: #FFFFFF;
+  color: var(--apple-text-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0.5px 1px rgba(0, 0, 0, 0.08);
+  font-weight: 600;
+}
+
+.apple-segmented-item:not(.active) {
+  color: var(--apple-text-secondary);
+}
+
+.apple-segmented-item:not(.active):hover {
+  color: var(--apple-text-primary);
 }
 
 /* ── CV Preview (print-faithful rendering) ────────────────────────────────── */
 .cv-preview {
+  /*
+   * CRITICAL: Isolate the CV sheet from all global CSS changes (editor
+   * typography bumps, form-input font-size, Tailwind resets, etc.).
+   * The templates define their own inline font-size and family — this
+   * rule ensures those are the definitive values and nothing leaks in.
+   */
   font-family: var(--font-serif);
   background: white;
   color: #111;
   line-height: 1.45;
+  font-size: 11px;           /* Hard baseline; each template overrides inline */
+  /* Prevent any content from visually overflowing the 816px sheet horizontally */
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.cv-preview * {
+  /* Ensure no child element breaks out of the sheet horizontally */
+  max-width: 100%;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .cv-preview h1 {
@@ -31,49 +168,162 @@ body {
   letter-spacing: 0.08em;
 }
 
-/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+/* ── Smooth Minimal Scrollbars ────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-gray-200;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-400 rounded-full;
+  background: rgba(0, 0, 0, 0.16);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.28);
 }
 
-/* ── Editor form utilities ────────────────────────────────────────────────── */
+/* ── Editor Form Utilities (Apple HIG) ────────────────────────────────────── */
 .form-input {
-  @apply w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white
-         focus:outline-none focus:ring-2 focus:ring-blue-900/30 focus:border-blue-900
-         placeholder:text-gray-300 transition-colors;
+  width: 100%;
+  padding: 9.5px 13px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--apple-text-primary);
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 11px;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 640px) {
+  .form-input {
+    font-size: 14.5px;
+    padding: 10px 14px;
+  }
+}
+
+.form-input::placeholder {
+  color: var(--apple-text-tertiary);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--apple-blue);
+  box-shadow: 0 0 0 3.5px rgba(0, 113, 227, 0.18);
 }
 
 .form-input:disabled {
-  @apply bg-gray-50 text-gray-400 cursor-not-allowed;
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--apple-text-tertiary);
+  cursor: not-allowed;
 }
 
 .section-title {
-  @apply text-xs font-bold uppercase tracking-widest text-gray-500 mb-3 pb-2 border-b border-gray-200;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--apple-text-secondary);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--apple-border);
+}
+
+@media (min-width: 640px) {
+  .section-title {
+    font-size: 13px;
+  }
 }
 
 .entry-card {
-  @apply bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3;
+  background: #FFFFFF;
+  border: 1px solid var(--apple-border);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.entry-card:hover {
+  border-color: rgba(0, 0, 0, 0.14);
 }
 
 .entry-header {
-  @apply flex justify-between items-center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .entry-index {
-  @apply text-xs font-bold text-[var(--color-accent)] bg-blue-50 w-6 h-6 rounded-full flex items-center justify-center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--apple-blue);
+  background: rgba(0, 113, 227, 0.08);
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-remove {
-  @apply text-gray-400 hover:text-red-500 text-xs font-bold px-2 py-1 rounded transition-colors cursor-pointer;
+  color: var(--apple-text-tertiary);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.btn-remove:hover {
+  color: var(--apple-red);
+  background: rgba(255, 59, 48, 0.08);
 }
 
 .btn-add {
-  @apply w-full py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-sm
-         text-gray-400 hover:border-blue-900 hover:text-blue-900 transition-colors cursor-pointer;
+  width: 100%;
+  padding: 11px;
+  border: 1px dashed rgba(0, 113, 227, 0.35);
+  background: rgba(0, 113, 227, 0.03);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--apple-blue);
+  cursor: pointer;
+  transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+@media (min-width: 640px) {
+  .btn-add {
+    font-size: 14.5px;
+    padding: 12px;
+  }
+}
+
+.btn-add:hover {
+  background: rgba(0, 113, 227, 0.08);
+  border-color: var(--apple-blue);
+}
+
+.btn-add:active {
+  transform: scale(0.985);
+}
+
+/* ── Accessibility & Reduced Motion (apple-design §14) ───────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

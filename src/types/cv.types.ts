@@ -1,7 +1,7 @@
 // ─── CV Types ────────────────────────────────────────────────────────────────
 
 export type AppLanguage = 'es' | 'en'
-export type TemplateVariant = 'classic' | 'modern' | 'compact' | 'elegant' | 'elegant2'
+export type TemplateVariant = 'classic' | 'modern' | 'compact' | 'elegant' | 'elegant2' | 'wave'
 
 export interface CVMeta {
   id: string
@@ -12,13 +12,23 @@ export interface CVMeta {
 
 export interface PersonalInfo {
   fullName: string
+  firstName?: string
+  lastName?: string
   title: string       // e.g. "Economista | Consultor Financiero"
+  useTitleAsHeading?: boolean
   email: string
   phone: string
+  address?: string
+  postalCode?: string
+  city?: string
   location: string   // e.g. "Bogotá, COL"
   linkedin: string
   website: string
   photo: string      // base64 data URL, e.g. "data:image/jpeg;base64,..."
+  birthDate?: string
+  birthPlace?: string
+  driverLicense?: string
+  gender?: string
 }
 
 export interface ExperienceEntry {
@@ -90,13 +100,23 @@ export function createEmptyCV(): CVData {
     },
     personal: {
       fullName: '',
+      firstName: '',
+      lastName: '',
       title: '',
+      useTitleAsHeading: false,
       email: '',
       phone: '',
+      address: '',
+      postalCode: '',
+      city: '',
       location: '',
       linkedin: '',
       website: '',
       photo: '',
+      birthDate: '',
+      birthPlace: '',
+      driverLicense: '',
+      gender: '',
     },
     summary: '',
     education: [],

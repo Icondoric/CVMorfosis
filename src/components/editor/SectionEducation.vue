@@ -38,7 +38,7 @@
         </FormField>
 
         <FormField :label="t('fields.thesis')" class="col-span-2">
-          <input v-model="entry.thesis" type="text" class="form-input" placeholder="Título de la tesis (opcional)" />
+          <AutoExpandTextarea v-model="entry.thesis" :min-rows="1" placeholder="Título de la tesis (opcional)" />
         </FormField>
       </div>
     </div>
@@ -54,6 +54,7 @@ import { useI18n } from 'vue-i18n'
 import { useCVStore } from '@/stores/cvStore'
 import { storeToRefs } from 'pinia'
 import FormField from '@/components/ui/FormField.vue'
+import AutoExpandTextarea from '@/components/ui/AutoExpandTextarea.vue'
 
 const { t } = useI18n()
 const store = useCVStore()

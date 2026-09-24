@@ -4,9 +4,11 @@ const PDF_SERVER = 'http://localhost:3001/api/pdf'
 
 export function usePDFExport() {
   const isExporting = ref(false)
+  const exportError = ref<string | null>(null)
 
   async function exportPDF(element: HTMLElement, filename: string = 'cv-harvard') {
     isExporting.value = true
+    exportError.value = null
     try {
       // ── Collect ALL styles from the document head ─────────────────────────
       // This is critical: Vue scoped styles (.foo[data-v-XXXX]) live in <head>
@@ -48,11 +50,11 @@ export function usePDFExport() {
 
     } catch (err) {
       console.error('PDF export error:', err)
-      alert(`Error al exportar el PDF:\n${err}\n\nAsegúrate de que el servidor PDF esté corriendo:\nnpm run server`)
+      exportError.value = `Error al exportar el PDF. Asegúrate de que el servidor PDF esté corriendo: npm run server (${err instanceof Error ? err.message : String(err)})`
     } finally {
       isExporting.value = false
     }
   }
 
-  return { exportPDF, isExporting }
+  return { exportPDF, isExporting, exportError }
 }

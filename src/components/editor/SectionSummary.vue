@@ -2,14 +2,16 @@
   <div class="space-y-3">
     <h2 class="section-title">{{ t('sections.summary') }}</h2>
     <FormField :label="t('sections.summary')">
-      <textarea
+      <AutoExpandTextarea
         v-model="cv.summary"
-        rows="7"
-        class="form-input resize-none"
+        :min-rows="5"
         :placeholder="t('fields.summary')"
       />
     </FormField>
-    <p class="text-xs text-gray-400">{{ cv.summary.length }} / 800</p>
+    <div class="flex items-center justify-between text-xs text-[var(--apple-text-tertiary)]">
+      <span>Describe tu valor diferencial, años de experiencia y principales logros.</span>
+      <span>{{ cv.summary.length }} / 800</span>
+    </div>
   </div>
 </template>
 
@@ -18,6 +20,7 @@ import { useI18n } from 'vue-i18n'
 import { useCVStore } from '@/stores/cvStore'
 import { storeToRefs } from 'pinia'
 import FormField from '@/components/ui/FormField.vue'
+import AutoExpandTextarea from '@/components/ui/AutoExpandTextarea.vue'
 
 const { t } = useI18n()
 const store = useCVStore()
