@@ -9,29 +9,32 @@
     >
       <div class="entry-header">
         <span class="entry-index">{{ idx + 1 }}</span>
-        <button @click="store.removeExperience(entry.id)" class="btn-remove">✕</button>
+        <EntryControls
+          :index="idx"
+          :count="cv.experience.length"
+          @up="store.moveEntry('experience', entry.id, -1)"
+          @down="store.moveEntry('experience', entry.id, 1)"
+          @remove="store.removeExperience(entry.id)"
+        />
       </div>
 
-      <div class="grid grid-cols-2 gap-3">
-        <FormField :label="t('fields.company')" required>
-          <input v-model="entry.company" type="text" class="form-input" placeholder="Deloitte Consulting" />
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <FormField :label="t('fields.company')" required v-slot="{ id }">
+          <input :id="id" v-model="entry.company" type="text" class="form-input" placeholder="Deloitte Consulting" />
         </FormField>
 
-        <FormField :label="t('fields.role')" required>
-          <input v-model="entry.role" type="text" class="form-input" placeholder="Consultor Senior de Estrategia" />
+        <FormField :label="t('fields.role')" required v-slot="{ id }">
+          <input :id="id" v-model="entry.role" type="text" class="form-input" placeholder="Consultor Senior de Estrategia" />
         </FormField>
 
-        <FormField :label="t('fields.startDate')" required>
-          <input v-model="entry.startDate" type="text" class="form-input" placeholder="Enero 2020" />
+        <FormField :label="t('fields.startDate')" required v-slot="{ id }">
+          <DateField :id="id" v-model="entry.startDate" />
         </FormField>
 
-        <FormField :label="t('fields.endDate')">
+        <FormField :label="t('fields.endDate')" v-slot="{ id }">
           <div class="flex gap-2 items-center">
-            <input
+            <DateField :id="id"
               v-model="entry.endDate"
-              type="text"
-              class="form-input"
-              :placeholder="t('fields.present')"
               :disabled="entry.endDate === 'Presente' || entry.endDate === 'Present'"
             />
           </div>
@@ -46,14 +49,14 @@
           </label>
         </FormField>
 
-        <FormField :label="t('fields.location')" class="col-span-2">
-          <input v-model="entry.location" type="text" class="form-input" placeholder="Bogotá, COL" />
+        <FormField :label="t('fields.location')" class="sm:col-span-2" v-slot="{ id }">
+          <input :id="id" v-model="entry.location" type="text" class="form-input" placeholder="Bogotá, COL" />
         </FormField>
       </div>
 
       <!-- Bullets -->
       <div class="mt-3 space-y-2">
-        <label class="text-[12px] font-medium text-[var(--apple-text-secondary)] uppercase tracking-wide">Responsabilidades / Logros</label>
+        <label class="text-[12px] font-medium text-[var(--apple-text-secondary)] uppercase tracking-wide">{{ t('editor.bulletsLabel') }}</label>
         <div
           v-for="(bullet, bIdx) in entry.bullets"
           :key="bIdx"
@@ -69,11 +72,12 @@
           <button
             @click="store.removeBullet(entry.id, bIdx)"
             class="mt-2 text-gray-400 hover:text-red-500 text-xs px-1.5 py-1 rounded hover:bg-red-50 flex-shrink-0"
-            title="Eliminar viñeta"
+            :title="t('editor.removeBullet')"
+            :aria-label="t('editor.removeBullet')"
           >✕</button>
         </div>
         <button @click="store.addBullet(entry.id)" class="text-xs text-[var(--apple-blue)] font-medium hover:underline flex items-center gap-1 mt-1">
-          + {{ t('actions.addBullet') }}
+          {{ t('actions.addBullet') }}
         </button>
       </div>
     </div>
@@ -90,6 +94,8 @@ import { useCVStore } from '@/stores/cvStore'
 import { storeToRefs } from 'pinia'
 import type { ExperienceEntry } from '@/types/cv.types'
 import FormField from '@/components/ui/FormField.vue'
+import EntryControls from '@/components/ui/EntryControls.vue'
+import DateField from '@/components/ui/DateField.vue'
 import AutoExpandTextarea from '@/components/ui/AutoExpandTextarea.vue'
 
 const { t, locale } = useI18n()

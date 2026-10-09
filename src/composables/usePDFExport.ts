@@ -1,10 +1,17 @@
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useTypographyStyles } from '@/composables/useTypographyStyles'
+import { useCVStore } from '@/stores/cvStore'
+import { toSafeFilename } from '@/utils/filename'
 
 const PDF_SERVER = 'http://localhost:3001/api/pdf'
 
 export function usePDFExport() {
   const isExporting = ref(false)
   const exportError = ref<string | null>(null)
+  const { pdfConfig } = useTypographyStyles()
+  const { locale, t } = useI18n()
+  const store = useCVStore()
 
   async function exportPDF(element: HTMLElement, filename: string = 'cv-harvard') {
     isExporting.value = true
@@ -29,6 +36,10 @@ export function usePDFExport() {
           html:    element.outerHTML,
           styles:  linkedStyles + '\n' + allStyles,
           filename,
+          pageFormat: pdfConfig.value.pageFormat,
+          lang:       locale.value,
+          // Shown by PDF viewers and some ATS as the document name
+          title:      [store.cv.personal.fullName.trim(), 'CV'].filter(Boolean).join(' - '),
         }),
       })
 
@@ -40,7 +51,7 @@ export function usePDFExport() {
       const blob = await response.blob()
       const url  = URL.createObjectURL(blob)
       const link = document.createElement('a')
-      const safe = filename.replace(/[^a-z0-9_-]/gi, '_').toLowerCase()
+      const safe = toSafeFilename(filename)
       link.href     = url
       link.download = `${safe}.pdf`
       document.body.appendChild(link)
@@ -50,7 +61,7 @@ export function usePDFExport() {
 
     } catch (err) {
       console.error('PDF export error:', err)
-      exportError.value = `Error al exportar el PDF. Asegúrate de que el servidor PDF esté corriendo: npm run server (${err instanceof Error ? err.message : String(err)})`
+      exportError.value = t('export.serverError', { detail: err instanceof Error ? err.message : String(err) })
     } finally {
       isExporting.value = false
     }

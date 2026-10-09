@@ -7,8 +7,8 @@
       <button
         @click="goHome"
         class="apple-btn flex items-center gap-2 text-white hover:opacity-80 transition-opacity"
-        aria-label="Volver a la página principal de CVMorfosis"
-        title="Volver al inicio"
+        :aria-label="t('header.back')"
+        :title="t('header.back')"
       >
         <AppIcon name="arrowLeft" size="sm" class="text-white" />
         <span class="text-sm font-semibold tracking-tight text-white">CV</span>
@@ -23,8 +23,8 @@
           name="cloudCheck"
           size="xs"
           class="text-emerald-400 flex-shrink-0"
-          title="Guardado automático en tu navegador"
-          aria-label="Guardado automático activo"
+          :title="t('header.autosaved')"
+          :aria-label="t('header.autosaved')"
         />
       </div>
 
@@ -35,7 +35,7 @@
           <button
             @click="showLangMenu = !showLangMenu"
             class="apple-btn flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-xs font-semibold text-white transition-colors"
-            aria-label="Selector de idioma"
+            :aria-label="t('header.language')"
             :aria-expanded="showLangMenu"
             aria-haspopup="true"
           >
@@ -47,7 +47,7 @@
             v-if="showLangMenu"
             class="absolute right-0 mt-1.5 w-28 bg-[#1D1D1F] border border-white/10 rounded-xl shadow-xl py-1 z-30 text-xs text-white"
             role="menu"
-            aria-label="Idiomas disponibles"
+            :aria-label="t('header.language')"
           >
             <button
               @click="switchLanguage('es'); showLangMenu = false;"
@@ -68,56 +68,26 @@
           </div>
         </div>
 
-        <!-- Botón redondo gris oscuro con tres puntos verticales (menú de opciones) -->
-        <div class="relative">
-          <button
-            @click="showOptionsMenu = !showOptionsMenu"
-            class="apple-btn w-8 h-8 rounded-full bg-[#2C2C2E] hover:bg-[#3A3A3C] text-gray-200 flex items-center justify-center transition-colors"
-            aria-label="Opciones avanzadas del currículum"
-            :aria-expanded="showOptionsMenu"
-            aria-haspopup="true"
-            title="Opciones avanzadas"
-          >
-            <AppIcon name="dotsVertical" size="xs" />
-          </button>
-
-          <div
-            v-if="showOptionsMenu"
-            class="absolute right-0 mt-1.5 w-52 bg-[#1D1D1F] border border-white/10 rounded-xl shadow-xl py-1.5 z-30 text-xs text-white"
-          >
-            <button
-              @click="handleAtsExport(); showOptionsMenu = false;"
-              class="w-full text-left px-3.5 py-2 hover:bg-white/10 flex items-center gap-2"
-            >
-              <AppIcon name="ats" size="xs" class="text-[#34C759]" />
-              <span>Exportar versión ATS</span>
-            </button>
-            <button
-              @click="store.loadSampleData(); showOptionsMenu = false;"
-              class="w-full text-left px-3.5 py-2 hover:bg-white/10 flex items-center gap-2"
-            >
-              <AppIcon name="skills" size="xs" class="text-amber-400" />
-              <span>Cargar perfil de ejemplo</span>
-            </button>
-            <hr class="border-white/10 my-1" />
-            <button
-              @click="confirmReset(); showOptionsMenu = false;"
-              class="w-full text-left px-3.5 py-2 hover:bg-red-950/40 text-red-400 flex items-center gap-2"
-            >
-              <span>Restablecer todo el CV</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Botón principal rectangular bordes redondeados, azul vibrante, texto blanco 'Descargar' + icono -->
-        <button
-          @click="handleExport"
-          :disabled="isExporting"
-          class="apple-btn flex items-center gap-2 px-4 py-1.5 rounded-xl font-semibold text-xs sm:text-[13px] text-white bg-[#0071E3] hover:bg-[#0077ED] shadow-[0_2px_8px_rgba(0,113,227,0.35)] disabled:opacity-50 transition-all"
+        <!-- Exportación ATS: una sola columna, la más segura para filtros automáticos -->
+        <DownloadMenu
+          :label="t('header.exportAts')"
+          :title="t('header.exportAtsTitle')"
+          :busy="isBusy && pendingExport.mode === 'ats'"
+          @select="format => requestExport('ats', format)"
         >
-          <AppIcon :name="isExporting ? 'warning' : 'download'" size="xs" :class="{ 'animate-pulse': isExporting }" />
-          <span>{{ isExporting ? 'Generando...' : 'Descargar' }}</span>
-        </button>
+          <template #icon><AppIcon name="ats" size="xs" class="text-[#34C759]" /></template>
+        </DownloadMenu>
+
+        <!-- Descarga del diseño que se ve en la vista previa -->
+        <DownloadMenu
+          primary
+          :label="t('header.download')"
+          :busy="isBusy && pendingExport.mode === 'visual'"
+          :word-available="hasDocxVersion(store.cv.meta.template)"
+          @select="format => requestExport('visual', format)"
+        >
+          <template #icon><AppIcon name="download" size="xs" /></template>
+        </DownloadMenu>
       </div>
     </header>
 
@@ -132,14 +102,14 @@
             class="apple-segmented-item apple-btn px-4 py-1 text-xs font-semibold"
             :class="{ active: mobileTab === 'editor' }"
           >
-            Editor de Contenido
+            {{ t('header.tabEditor') }}
           </button>
           <button
             @click="mobileTab = 'preview'"
             class="apple-segmented-item apple-btn px-4 py-1 text-xs font-semibold"
             :class="{ active: mobileTab === 'preview' }"
           >
-            Vista Previa en Vivo
+            {{ t('header.tabPreview') }}
           </button>
         </div>
       </div>
@@ -150,7 +120,7 @@
         class="w-full lg:w-1/2 overflow-y-auto bg-white border-r border-[#E5E5EA] flex-shrink-0"
         :class="{ 'hidden lg:block': mobileTab !== 'editor' }"
       >
-        <EditorPanel />
+        <EditorPanel @download="requestExport('visual', 'pdf')" />
       </aside>
 
       <!-- ── 4. Panel Derecho (Vista Previa en Vivo) ───────────────────────── -->
@@ -164,49 +134,33 @@
     </div>
 
     <!-- ── Modales Apple (Diseño consistente con desenfoque de fondo) ───── -->
-    <!-- 1. Advertencia de CV en progreso -->
+    <!-- Advertencia de CV en progreso -->
     <AppleModal
       :is-open="showWarning"
-      title="CV en progreso"
-      subtitle="Faltan algunos datos en el formulario"
-      description="Puedes exportar tu PDF ahora mismo o regresar al editor para añadir más detalles a tu currículum."
+      :title="t('header.inProgress.title')"
+      :subtitle="t('header.inProgress.subtitle')"
+      :description="t('header.inProgress.body')"
       icon="warning"
       variant="warning"
-      confirm-text="Descargar de todos modos"
-      cancel-text="Seguir editando"
+      :confirm-text="t('header.inProgress.confirm')"
+      :cancel-text="t('header.inProgress.cancel')"
       @confirm="confirmExport"
       @cancel="cancelExport"
       @close="cancelExport"
     />
 
-    <!-- 2. Confirmación de Restablecimiento -->
+    <!-- Error en la exportación a PDF -->
     <AppleModal
-      :is-open="showResetModal"
-      title="Restablecer currículum"
-      subtitle="Esta acción no se puede deshacer"
-      description="¿Estás seguro de que deseas restablecer todo el currículum? Se borrarán todos los datos ingresados para comenzar desde cero."
-      icon="trash"
-      variant="danger"
-      confirm-text="Sí, restablecer todo"
-      cancel-text="Cancelar"
-      :is-destructive="true"
-      @confirm="executeReset"
-      @cancel="showResetModal = false"
-      @close="showResetModal = false"
-    />
-
-    <!-- 3. Error en la exportación a PDF -->
-    <AppleModal
-      :is-open="!!exportError"
-      title="Error al exportar PDF"
-      subtitle="Servicio de PDF no disponible"
-      :description="exportError || ''"
+      :is-open="!!failure"
+      :title="t('header.exportError.title')"
+      :subtitle="t('header.exportError.subtitle')"
+      :description="failure || ''"
       icon="warning"
       variant="danger"
-      confirm-text="Entendido"
+      :confirm-text="t('header.exportError.ok')"
       :show-cancel="false"
-      @confirm="exportError = null"
-      @close="exportError = null"
+      @confirm="clearFailure"
+      @close="clearFailure"
     />
 
     <!-- ── ATS Toast ──────────────────────────────────────────────────────── -->
@@ -216,7 +170,7 @@
         class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] bg-[#161617] text-white text-xs font-medium px-5 py-3 rounded-full shadow-2xl flex items-center gap-3 border border-white/10"
       >
         <AppIcon name="check" size="sm" class="text-emerald-400 flex-shrink-0" />
-        <span>PDF ATS generado y optimizado para reclutadores.</span>
+        <span>{{ t('header.atsToast') }}</span>
       </div>
     </Transition>
   </div>
@@ -228,30 +182,46 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useCVStore } from '@/stores/cvStore'
 import { usePDFExport } from '@/composables/usePDFExport'
+import { useDocxExport } from '@/composables/useDocxExport'
+import { hasDocxVersion } from '@/docx/designs'
+import DownloadMenu, { type ExportFormat } from '@/components/ui/DownloadMenu.vue'
 import EditorPanel from '@/components/editor/EditorPanel.vue'
 import PreviewPanel from '@/components/preview/PreviewPanel.vue'
 import AppIcon from '@/components/ui/AppIcon.vue'
 import AppleModal from '@/components/ui/AppleModal.vue'
 
 const router = useRouter()
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 const store = useCVStore()
+// A saved CV keeps its language across reloads
+locale.value = store.cv.meta.language
 const { exportPDF: doExport, isExporting, exportError } = usePDFExport()
+const { exportDocx, isExportingDocx, docxError } = useDocxExport()
 
 const previewRef = ref<InstanceType<typeof PreviewPanel> | null>(null)
 const showWarning = ref(false)
-const showResetModal = ref(false)
 const showAtsToast = ref(false)
 const showLangMenu = ref(false)
-const showOptionsMenu = ref(false)
 const mobileTab = ref<'editor' | 'preview'>('editor')
-const pendingExportMode = ref<'visual' | 'ats'>('visual')
+
+type ExportMode = 'visual' | 'ats'
+/** What the user asked to download; kept while the "CV incomplete" warning is open */
+const pendingExport = ref<{ mode: ExportMode; format: ExportFormat }>({ mode: 'visual', format: 'pdf' })
+
+const isBusy = computed(() => isExporting.value || isExportingDocx.value)
+const failure = computed(() => exportError.value || docxError.value)
+
+function clearFailure() {
+  exportError.value = null
+  docxError.value = null
+}
 
 const currentLang = computed(() => store.cv.meta.language)
 const isComplete = computed(() => previewRef.value?.isComplete ?? true)
 
 const documentTitle = computed(() => {
-  return store.cv.personal.fullName ? `CV - ${store.cv.personal.fullName}` : 'CV sin título'
+  const name = store.cv.personal.fullName
+  return name ? t('header.documentTitle', { name }) : t('header.untitled')
 })
 
 function goHome() {
@@ -263,33 +233,11 @@ function switchLanguage(lang: 'es' | 'en') {
   locale.value = lang
 }
 
-function confirmReset() {
-  showResetModal.value = true
-}
-
-function executeReset() {
-  store.resetCV()
-  showResetModal.value = false
-}
-
-// ── Visual PDF export ─────────────────────────────────────────────────────────
-function handleExport() {
-  pendingExportMode.value = 'visual'
-  if (!isComplete.value) {
-    showWarning.value = true
-  } else {
-    runVisualExport()
-  }
-}
-
-// ── ATS PDF export ────────────────────────────────────────────────────────────
-function handleAtsExport() {
-  pendingExportMode.value = 'ats'
-  if (!isComplete.value) {
-    showWarning.value = true
-  } else {
-    runAtsExport()
-  }
+// ── Export ────────────────────────────────────────────────────────────────────
+function requestExport(mode: ExportMode, format: ExportFormat) {
+  pendingExport.value = { mode, format }
+  if (!isComplete.value) showWarning.value = true
+  else runExport()
 }
 
 function cancelExport() {
@@ -298,17 +246,23 @@ function cancelExport() {
 
 function confirmExport() {
   showWarning.value = false
-  if (pendingExportMode.value === 'ats') {
-    runAtsExport()
-  } else {
-    runVisualExport()
-  }
+  runExport()
+}
+
+async function runExport() {
+  const { mode, format } = pendingExport.value
+  if (format === 'pdf') return mode === 'ats' ? runAtsExport() : runVisualExport()
+
+  const template = store.cv.meta.template
+  const name = store.cv.personal.fullName || 'cv-profesional'
+  if (mode === 'ats') await exportDocx('ats', `${name}_ATS`)
+  else if (hasDocxVersion(template)) await exportDocx(template, `${name}_visual`)
 }
 
 async function runVisualExport() {
   const el = previewRef.value?.getEl()
   if (el) {
-    const name = store.cv.personal.fullName || store.cv.personal.firstName || 'cv-profesional'
+    const name = store.cv.personal.fullName || 'cv-profesional'
     await doExport(el, `${name}_visual`)
   }
 }
@@ -316,7 +270,7 @@ async function runVisualExport() {
 async function runAtsExport() {
   const el = previewRef.value?.getAtsEl()
   if (el) {
-    const name = store.cv.personal.fullName || store.cv.personal.firstName || 'cv-profesional'
+    const name = store.cv.personal.fullName || 'cv-profesional'
     await doExport(el, `${name}_ATS`)
     showAtsToast.value = true
     setTimeout(() => { showAtsToast.value = false }, 4000)

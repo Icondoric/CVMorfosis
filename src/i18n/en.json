@@ -8,20 +8,24 @@
   },
   "templates": {
     "classic": "Classic",
-    "modern": "Modern",
-    "compact": "Compact",
-    "elegant": "Elegant",
-    "elegant2": "Elegant 2",
-    "wave": "Waves"
+    "modern": "Executive",
+    "compact": "Blue Sidebar",
+    "elegant": "Dark Sidebar",
+    "elegant2": "Minimal Side",
+    "elegant3": "Minimal",
+    "wave": "Waves",
+    "atsFriendly": "Single column: the safest layout for ATS filters"
   },
   "sections": {
     "personal": "Personal Information",
     "summary": "Professional Profile",
     "education": "Education",
     "experience": "Professional Experience",
-    "skills": "Skills",
+    "skills": "Soft Skills",
     "achievements": "Key Achievements",
-    "programs": "Programs & Software",
+    "certifications": "Certifications & Courses",
+    "programs": "Technical Skills",
+    "contact": "Contact",
     "languages": "Languages",
     "publications": "Publications"
   },
@@ -30,7 +34,7 @@
     "title": "Title / Position",
     "email": "Email address",
     "phone": "Phone number",
-    "location": "City, Country",
+    "location": "City",
     "linkedin": "LinkedIn (optional)",
     "website": "Website (optional)",
     "summary": "Write your professional profile...",
@@ -45,42 +49,172 @@
     "startDate": "Start date",
     "endDate": "End date",
     "present": "Present",
-    "location": "City",
     "bulletPlaceholder": "Describe an achievement or responsibility...",
-    "skill": "Skill",
+    "skill": "Soft skill",
     "skillPlaceholder": "e.g. Financial analysis",
     "organization": "Organization",
     "achievementTitle": "Achievement title",
     "description": "Description",
     "year": "Year",
-    "program": "Program / Software",
+    "program": "Technical skill",
     "languageName": "Language",
     "languageLevel": "Proficiency level",
     "authors": "Authors",
     "pubTitle": "Publication title",
     "journal": "Journal / Publisher",
-    "doi": "DOI (optional)"
+    "doi": "DOI (optional)",
+    "certName": "Certificate / Course name",
+    "certIssuer": "Issuing organization",
+    "certDate": "Issue date",
+    "certExpiration": "Expiration date (optional)",
+    "certCredentialId": "Credential ID (optional)",
+    "certUrl": "Verification URL (optional)",
+    "datePlaceholder": "MM/YYYY",
+    "dateHint": "Use month and year, for example 03/2020",
+    "selectLevel": "Select a level"
   },
   "actions": {
     "addExperience": "+ Add experience",
     "addEducation": "+ Add education",
-    "addSkill": "+ Add skill",
+    "addSkill": "+ Add soft skill",
     "addAchievement": "+ Add achievement",
-    "addProgram": "+ Add program",
+    "addCertification": "+ Add certification",
+    "addProgram": "+ Add technical skill",
     "addLanguage": "+ Add language",
     "addPublication": "+ Add publication",
     "addBullet": "+ Add bullet point",
     "remove": "Remove",
     "moveUp": "Move up",
-    "moveDown": "Move down"
+    "moveDown": "Move down",
+    "removed": "Item removed",
+    "undo": "Undo"
   },
   "preview": {
     "present": "Present",
-    "noContent": "Fill in the form to see the preview"
+    "thesis": "Thesis",
+    "credentialId": "Credential ID",
+    "noContent": "Fill in the form to see the preview",
+    "incompleteTitle": "Incomplete CV",
+    "missingFields": "Missing required fields:",
+    "incompleteHint": "You can still export it, but it may have empty spaces.",
+    "sheets": "{count} Pages",
+    "printSplitActive": "Print page split active",
+    "sheetOf": "Page {current} of {total}",
+    "pageBreak": "Page Break · End of Page {current} / Start of Page {next}",
+    "autosaved": "Saved automatically · Last modified: {date}"
+  },
+  "toolbar": {
+    "typography": "Typography",
+    "fullscreen": "Fullscreen"
+  },
+  "typography": {
+    "title": "Document appearance",
+    "close": "Close typography panel",
+    "font": "Font",
+    "fontSize": "Font size",
+    "decreaseSize": "Decrease font size",
+    "increaseSize": "Increase font size",
+    "pageFormat": "Page format",
+    "pageSizes": {
+      "letter": "Letter",
+      "a4": "A4",
+      "legal": "Legal"
+    }
   },
   "export": {
     "preparing": "Preparing PDF...",
     "success": "PDF generated successfully",
-    "error": "Error generating PDF"
+    "error": "Error generating PDF",
+    "serverError": "The PDF could not be generated. Check that the PDF server is running (npm run server). Detail: {detail}",
+    "docxError": "The Word file could not be generated. Detail: {detail}"
+  },
+  "editor": {
+    "stepByStep": "Complete your CV step by step",
+    "loadSample": "Load sample",
+    "loadSampleTitle": "Loads a complete sample executive profile",
+    "clear": "Clear",
+    "clearTitle": "Clear the CV data",
+    "stepOf": "Step {current} of {total}",
+    "previous": "Previous",
+    "next": "Next",
+    "download": "Download",
+    "cancel": "Cancel",
+    "required": "(required field)",
+    "saveFailed": "Auto-save failed: the browser storage is full or blocked. Download your CV so you do not lose your changes.",
+    "status": {
+      "complete": "Complete",
+      "missing": "Required details missing",
+      "empty": "Optional, not filled in"
+    },
+    "short": {
+      "personal": "Personal",
+      "summary": "Profile",
+      "experience": "Experience",
+      "education": "Education",
+      "skills": "Soft",
+      "programs": "Technical",
+      "languages": "Languages",
+      "achievements": "Awards",
+      "certifications": "Certs",
+      "publications": "Papers"
+    },
+    "reset": {
+      "title": "Reset CV",
+      "subtitle": "This action cannot be undone",
+      "body": "Are you sure you want to clear every field of the CV? All the data you entered will be deleted so you can start from scratch.",
+      "confirm": "Yes, clear everything"
+    },
+    "sample": {
+      "title": "Load sample profile",
+      "subtitle": "It will replace your current CV",
+      "body": "The sample replaces all the data you have entered. This action cannot be undone.",
+      "confirm": "Yes, replace"
+    },
+    "bulletsLabel": "Responsibilities / Achievements",
+    "removeBullet": "Remove bullet",
+    "skillsHint": "Soft and interpersonal skills",
+    "programsHint": "Software, tools and technical expertise. E.g. advanced Excel, Python, Power BI",
+    "publicationsHint": "APA/Harvard format. Optional.",
+    "summaryHint": "Describe what sets you apart, your years of experience and your main achievements.",
+    "photo": {
+      "title": "Profile photo",
+      "hint": "Optional. Shown in the Minimal, Minimal Side, Dark Sidebar and Waves templates.",
+      "change": "Change",
+      "remove": "Remove",
+      "upload": "+ Upload photo",
+      "error": "The image could not be read. Try a JPG or PNG file.",
+      "alt": "Candidate profile photo"
+    },
+    "quickAdd": "Type one and press Enter, or paste a comma-separated list.",
+    "summaryTooLong": "Recommended: {max} characters at most"
+  },
+  "header": {
+    "back": "Back to home",
+    "untitled": "Untitled CV",
+    "documentTitle": "CV - {name}",
+    "autosaved": "Saved automatically in your browser",
+    "language": "Language selector",
+    "exportAts": "ATS version",
+    "exportAtsTitle": "Downloads a single-column version optimized for ATS filters",
+    "download": "Download",
+    "generating": "Generating...",
+    "tabEditor": "Content Editor",
+    "tabPreview": "Live Preview",
+    "inProgress": {
+      "title": "CV in progress",
+      "subtitle": "Some details are missing in the form",
+      "body": "You can export your PDF right now or go back to the editor to add more details to your CV.",
+      "confirm": "Download anyway",
+      "cancel": "Keep editing"
+    },
+    "exportError": {
+      "title": "PDF export error",
+      "subtitle": "PDF service unavailable",
+      "ok": "Got it"
+    },
+    "atsToast": "ATS PDF generated and optimized for recruiters.",
+    "formatPdf": "PDF",
+    "formatWord": "Word (.docx), editable",
+    "wordUnavailable": "This template has no Word version yet. The ATS version is available."
   }
 }

@@ -37,3 +37,20 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+
+# Environment variables (credentials, deployment settings)
+.env
+.env.*
+!.env.example
+
+# AI tooling (local configuration)
+.agents/
+.claude/
+
+# OS files
+Thumbs.db
+desktop.ini
+
+# Exported CVs saved to the project root while testing
+/*.pdf
+/*.docx

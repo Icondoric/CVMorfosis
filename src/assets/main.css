@@ -144,11 +144,11 @@ body {
    * The templates define their own inline font-size and family — this
    * rule ensures those are the definitive values and nothing leaks in.
    */
-  font-family: var(--font-serif);
+  font-family: var(--cv-font-family, Verdana, Geneva, Tahoma, sans-serif);
   background: white;
   color: #111;
   line-height: 1.45;
-  font-size: 11px;           /* Hard baseline; each template overrides inline */
+  font-size: var(--cv-font-size, 11px);           /* Hard baseline; each template overrides inline */
   /* Prevent any content from visually overflowing the 816px sheet horizontally */
   overflow-x: hidden;
   word-wrap: break-word;
@@ -163,8 +163,20 @@ body {
   overflow-wrap: break-word;
 }
 
+/*
+ * Punctuation that only PDF text extractors (ATS parsers) see: it is
+ * transparent and takes no space, so the design is unchanged. It must stay
+ * in normal flow — positioned elements are written at the end of the PDF.
+ */
+.cv-preview .cv-sep {
+  display: inline-block;
+  width: 0;
+  color: transparent;
+  white-space: pre;
+}
+
 .cv-preview h1 {
-  font-family: var(--font-serif);
+  font-family: var(--cv-font-family, inherit);
   letter-spacing: 0.08em;
 }
 

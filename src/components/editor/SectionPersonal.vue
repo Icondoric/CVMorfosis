@@ -14,40 +14,40 @@
             v-if="cv.personal.photo"
             :src="cv.personal.photo"
             class="w-full h-full object-cover"
-            alt="Foto de perfil del candidato"
+            :alt="t('editor.photo.alt')"
             width="80"
             height="80"
             loading="lazy"
           />
           <AppIcon v-else name="personal" size="lg" class="text-gray-400" />
           <div class="absolute inset-0 bg-black/40 backdrop-blur-[2px] rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <span class="text-white text-[11px] font-semibold">Cambiar</span>
+            <span class="text-white text-[11px] font-semibold">{{ t('editor.photo.change') }}</span>
           </div>
         </div>
         <button
           v-if="cv.personal.photo"
           @click="cv.personal.photo = ''"
           class="apple-btn mt-1.5 w-20 text-center text-[11px] font-semibold text-[var(--apple-red)] hover:opacity-80 block"
-        >Quitar</button>
+        >{{ t('editor.photo.remove') }}</button>
       </div>
 
       <div class="flex-1 space-y-1 pt-1">
-        <p class="text-xs font-semibold text-[var(--apple-text-primary)]">Foto de perfil</p>
-        <p class="text-[11px] text-[var(--apple-text-secondary)]">Opcional. Se muestra en el template Elegante 2 y Ondas.</p>
+        <p class="text-xs font-semibold text-[var(--apple-text-primary)]">{{ t('editor.photo.title') }}</p>
+        <p class="text-[11px] text-[var(--apple-text-secondary)]">{{ t('editor.photo.hint') }}</p>
         <button
           @click="triggerFileInput"
           type="button"
           class="apple-btn text-xs font-semibold text-[var(--apple-blue)] hover:underline block pt-1"
-          aria-label="Subir foto de perfil"
         >
-          + Subir foto
+          {{ t('editor.photo.upload') }}
         </button>
+        <p v-if="photoError" class="text-[11px] text-[var(--apple-red)]">{{ t('editor.photo.error') }}</p>
         <input
           ref="fileInputRef"
           type="file"
           accept="image/jpeg,image/png,image/webp"
           class="hidden"
-          aria-label="Seleccionar archivo de imagen para foto de perfil"
+          :aria-label="t('editor.photo.upload')"
           @change="onPhotoChange"
         />
       </div>
@@ -144,6 +144,7 @@ import { useCVStore } from '@/stores/cvStore'
 import { storeToRefs } from 'pinia'
 import FormField from '@/components/ui/FormField.vue'
 import AppIcon from '@/components/ui/AppIcon.vue'
+import { resizeImageToDataUrl } from '@/utils/image'
 
 const { t } = useI18n()
 const store = useCVStore()
@@ -155,15 +156,19 @@ function triggerFileInput() {
   fileInputRef.value?.click()
 }
 
-function onPhotoChange(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  const reader = new FileReader()
-  reader.onload = (evt) => {
-    cv.value.personal.photo = evt.target?.result as string
-  }
-  reader.readAsDataURL(file)
+const photoError = ref(false)
+
+async function onPhotoChange(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
   // Reset input so same file can be re-selected
-  ;(e.target as HTMLInputElement).value = ''
+  input.value = ''
+  if (!file) return
+  try {
+    cv.value.personal.photo = await resizeImageToDataUrl(file)
+    photoError.value = false
+  } catch {
+    photoError.value = true
+  }
 }
 </script>

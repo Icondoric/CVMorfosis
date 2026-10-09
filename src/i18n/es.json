@@ -8,20 +8,24 @@
   },
   "templates": {
     "classic": "Clásico",
-    "modern": "Moderno",
-    "compact": "Compacto",
-    "elegant": "Elegante",
-    "elegant2": "Elegante 2",
-    "wave": "Ondas"
+    "modern": "Ejecutivo",
+    "compact": "Lateral azul",
+    "elegant": "Lateral oscuro",
+    "elegant2": "Minimalista lateral",
+    "elegant3": "Minimalista",
+    "wave": "Ondas",
+    "atsFriendly": "Una sola columna: el formato más seguro para filtros ATS"
   },
   "sections": {
     "personal": "Información Personal",
     "summary": "Perfil Profesional",
     "education": "Educación",
     "experience": "Experiencia Profesional",
-    "skills": "Habilidades",
+    "skills": "Habilidades Blandas",
     "achievements": "Logros Destacados",
-    "programs": "Programas y Software",
+    "certifications": "Certificaciones y Cursos",
+    "programs": "Habilidades Técnicas",
+    "contact": "Contacto",
     "languages": "Idiomas",
     "publications": "Publicaciones"
   },
@@ -30,7 +34,7 @@
     "title": "Título / Cargo",
     "email": "Correo electrónico",
     "phone": "Teléfono",
-    "location": "Ciudad, País",
+    "location": "Ciudad",
     "linkedin": "LinkedIn (opcional)",
     "website": "Sitio web (opcional)",
     "summary": "Escribe tu perfil profesional...",
@@ -45,42 +49,172 @@
     "startDate": "Inicio",
     "endDate": "Fin",
     "present": "Presente",
-    "location": "Ciudad",
     "bulletPlaceholder": "Describe un logro o responsabilidad...",
-    "skill": "Habilidad",
-    "skillPlaceholder": "Ej: Análisis financiero",
+    "skill": "Habilidad blanda",
+    "skillPlaceholder": "Ej: Liderazgo, Comunicación asertiva, Pensamiento analítico",
     "organization": "Organización",
     "achievementTitle": "Título del logro",
     "description": "Descripción",
     "year": "Año",
-    "program": "Programa / Software",
+    "program": "Habilidad técnica",
     "languageName": "Idioma",
     "languageLevel": "Nivel",
     "authors": "Autores",
     "pubTitle": "Título de la publicación",
     "journal": "Revista / Editorial",
-    "doi": "DOI (opcional)"
+    "doi": "DOI (opcional)",
+    "certName": "Nombre del certificado / curso",
+    "certIssuer": "Organización emisora",
+    "certDate": "Fecha de emisión",
+    "certExpiration": "Fecha de vencimiento (opcional)",
+    "certCredentialId": "ID de credencial (opcional)",
+    "certUrl": "URL de verificación (opcional)",
+    "datePlaceholder": "MM/AAAA",
+    "dateHint": "Usa mes y año, por ejemplo 03/2020",
+    "selectLevel": "Selecciona un nivel"
   },
   "actions": {
     "addExperience": "+ Agregar experiencia",
     "addEducation": "+ Agregar educación",
-    "addSkill": "+ Agregar habilidad",
+    "addSkill": "+ Agregar habilidad blanda",
     "addAchievement": "+ Agregar logro",
-    "addProgram": "+ Agregar programa",
+    "addCertification": "+ Agregar certificación",
+    "addProgram": "+ Agregar habilidad técnica",
     "addLanguage": "+ Agregar idioma",
     "addPublication": "+ Agregar publicación",
     "addBullet": "+ Agregar punto",
     "remove": "Eliminar",
     "moveUp": "Subir",
-    "moveDown": "Bajar"
+    "moveDown": "Bajar",
+    "removed": "Elemento eliminado",
+    "undo": "Deshacer"
   },
   "preview": {
     "present": "Presente",
-    "noContent": "Completa el formulario para ver la vista previa"
+    "thesis": "Tesis",
+    "credentialId": "ID de credencial",
+    "noContent": "Completa el formulario para ver la vista previa",
+    "incompleteTitle": "CV incompleto",
+    "missingFields": "Faltan campos requeridos:",
+    "incompleteHint": "Puedes exportarlo igualmente, pero puede quedar con espacios vacíos.",
+    "sheets": "{count} Hojas",
+    "printSplitActive": "División de impresión activa",
+    "sheetOf": "Hoja {current} de {total}",
+    "pageBreak": "Salto de Página · Fin de Hoja {current} / Inicio de Hoja {next}",
+    "autosaved": "Guardado automáticamente · Última modificación: {date}"
+  },
+  "toolbar": {
+    "typography": "Tipografía",
+    "fullscreen": "Pantalla completa"
+  },
+  "typography": {
+    "title": "Apariencia del documento",
+    "close": "Cerrar panel de tipografía",
+    "font": "Fuente",
+    "fontSize": "Tamaño de letra",
+    "decreaseSize": "Reducir tamaño de letra",
+    "increaseSize": "Aumentar tamaño de letra",
+    "pageFormat": "Formato de hoja",
+    "pageSizes": {
+      "letter": "Carta",
+      "a4": "A4",
+      "legal": "Oficio"
+    }
   },
   "export": {
     "preparing": "Preparando PDF...",
     "success": "PDF generado exitosamente",
-    "error": "Error al generar el PDF"
+    "error": "Error al generar el PDF",
+    "serverError": "No se pudo generar el PDF. Comprueba que el servidor de PDF esté en marcha (npm run server). Detalle: {detail}",
+    "docxError": "No se pudo generar el archivo de Word. Detalle: {detail}"
+  },
+  "editor": {
+    "stepByStep": "Completa tu CV paso a paso",
+    "loadSample": "Cargar ejemplo",
+    "loadSampleTitle": "Carga un perfil ejecutivo completo de ejemplo",
+    "clear": "Limpiar",
+    "clearTitle": "Limpiar datos del CV",
+    "stepOf": "Paso {current} de {total}",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "download": "Descargar",
+    "cancel": "Cancelar",
+    "required": "(campo obligatorio)",
+    "saveFailed": "No se pudo guardar automáticamente: el almacenamiento del navegador está lleno o bloqueado. Descarga tu CV para no perder los cambios.",
+    "status": {
+      "complete": "Completa",
+      "missing": "Faltan datos obligatorios",
+      "empty": "Opcional, sin completar"
+    },
+    "short": {
+      "personal": "Personal",
+      "summary": "Perfil",
+      "experience": "Experiencia",
+      "education": "Educación",
+      "skills": "Blandas",
+      "programs": "Técnicas",
+      "languages": "Idiomas",
+      "achievements": "Logros",
+      "certifications": "Certif.",
+      "publications": "Publicac."
+    },
+    "reset": {
+      "title": "Restablecer currículum",
+      "subtitle": "Esta acción no se puede deshacer",
+      "body": "¿Estás seguro de que deseas limpiar todos los campos del currículum? Se borrarán todos los datos ingresados para que comiences desde cero.",
+      "confirm": "Sí, limpiar todo"
+    },
+    "sample": {
+      "title": "Cargar perfil de ejemplo",
+      "subtitle": "Reemplazará tu CV actual",
+      "body": "El ejemplo sustituye todos los datos que has ingresado. Esta acción no se puede deshacer.",
+      "confirm": "Sí, reemplazar"
+    },
+    "bulletsLabel": "Responsabilidades / Logros",
+    "removeBullet": "Eliminar viñeta",
+    "skillsHint": "Habilidades blandas e interpersonales",
+    "programsHint": "Software, herramientas y dominio técnico. Ej.: Excel avanzado, Python, Power BI",
+    "publicationsHint": "Formato APA/Harvard. Opcional.",
+    "summaryHint": "Describe tu valor diferencial, años de experiencia y principales logros.",
+    "photo": {
+      "title": "Foto de perfil",
+      "hint": "Opcional. Se muestra en las plantillas Minimalista, Minimalista lateral, Lateral oscuro y Ondas.",
+      "change": "Cambiar",
+      "remove": "Quitar",
+      "upload": "+ Subir foto",
+      "error": "No se pudo leer la imagen. Prueba con un archivo JPG o PNG.",
+      "alt": "Foto de perfil del candidato"
+    },
+    "quickAdd": "Escribe una y pulsa Enter, o pega una lista separada por comas.",
+    "summaryTooLong": "Recomendado: máximo {max} caracteres"
+  },
+  "header": {
+    "back": "Volver al inicio",
+    "untitled": "CV sin título",
+    "documentTitle": "CV - {name}",
+    "autosaved": "Guardado automático en tu navegador",
+    "language": "Selector de idioma",
+    "exportAts": "Versión ATS",
+    "exportAtsTitle": "Descarga una versión de una sola columna, optimizada para filtros ATS",
+    "download": "Descargar",
+    "generating": "Generando...",
+    "tabEditor": "Editor de Contenido",
+    "tabPreview": "Vista Previa en Vivo",
+    "inProgress": {
+      "title": "CV en progreso",
+      "subtitle": "Faltan algunos datos en el formulario",
+      "body": "Puedes exportar tu PDF ahora mismo o regresar al editor para añadir más detalles a tu currículum.",
+      "confirm": "Descargar de todos modos",
+      "cancel": "Seguir editando"
+    },
+    "exportError": {
+      "title": "Error al exportar PDF",
+      "subtitle": "Servicio de PDF no disponible",
+      "ok": "Entendido"
+    },
+    "atsToast": "PDF ATS generado y optimizado para reclutadores.",
+    "formatPdf": "PDF",
+    "formatWord": "Word (.docx), editable",
+    "wordUnavailable": "Esta plantilla todavía no tiene versión en Word. La versión ATS sí está disponible."
   }
 }

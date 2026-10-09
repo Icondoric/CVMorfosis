@@ -1,6 +1,8 @@
-import express from 'express'
+import express, { type Request, type Response } from 'express'
 import cors from 'cors'
-import puppeteer from 'puppeteer'
+import puppeteer, { type Browser } from 'puppeteer'
+import { PAGE_SIZES } from '../src/types/cv.types'
+import { toSafeFilename } from '../src/utils/filename'
 
 const app = express()
 const PORT = 3001
@@ -8,17 +10,37 @@ const PORT = 3001
 app.use(cors({ origin: 'http://localhost:5173' }))
 app.use(express.json({ limit: '20mb' }))
 
+// Web fonts for the CV. Keep in sync with the <link> tags in index.html.
+const GOOGLE_FONTS_URL = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Arimo:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&family=Carlito:ital,wght@0,400;0,700;1,400;1,700&family=Gelasio:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&display=swap'
+
+interface PdfRequestBody {
+  html?: string
+  styles?: string
+  filename?: string
+  pageFormat?: string
+  lang?: string
+  title?: string
+}
+
+const escapeHtml = (text: string) =>
+  text.replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`)
+
+/** Only known paper formats reach Puppeteer; anything else falls back to Letter. */
+function resolvePageSize(pageFormat: unknown) {
+  return PAGE_SIZES.find(p => p.puppeteerFormat === pageFormat) ?? PAGE_SIZES[0]
+}
+
 // ── POST /api/pdf ─────────────────────────────────────────────────────────────
-app.post('/api/pdf', async (req: any, res: any) => {
-  const { html, styles = '', filename = 'cv-harvard' } = req.body as {
-    html: string
-    styles?: string
-    filename?: string
-  }
+app.post('/api/pdf', async (req: Request, res: Response) => {
+  const { html, styles = '', filename = 'cv-harvard', pageFormat, lang, title = 'CV' } = (req.body ?? {}) as PdfRequestBody
 
   if (!html) return res.status(400).json({ error: 'html is required' })
 
-  let browser: any = null
+  const pageSize = resolvePageSize(pageFormat)
+  // Declared document language, read by ATS parsers and screen readers
+  const htmlLang = lang === 'en' ? 'en' : 'es'
+
+  let browser: Browser | null = null
   try {
     browser = await puppeteer.launch({
       headless: true,
@@ -33,19 +55,20 @@ app.post('/api/pdf', async (req: any, res: any) => {
 
     const page = await browser.newPage()
 
-    // Set viewport to exactly match the CV width so layout is identical to screen (Letter size: 816x1056 px)
-    await page.setViewport({ width: 816, height: 1056, deviceScaleFactor: 1 })
+    // Set viewport to exactly match the CV width so layout is identical to screen
+    await page.setViewport({ width: pageSize.widthPx, height: pageSize.heightPx, deviceScaleFactor: 1 })
 
     const fullHtml = `<!DOCTYPE html>
-<html lang="es">
+<html lang="${htmlLang}">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=816, initial-scale=1.0" />
+  <title>${escapeHtml(String(title).slice(0, 200))}</title>
+  <meta name="viewport" content="width=${pageSize.widthPx}, initial-scale=1.0" />
 
   <!-- Google Fonts (must load before content) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link href="${GOOGLE_FONTS_URL}" rel="stylesheet" />
 
   <!-- Reset + print accuracy -->
   <style>
@@ -55,7 +78,7 @@ app.post('/api/pdf', async (req: any, res: any) => {
     html, body {
       margin: 0;
       padding: 0;
-      width: 816px;
+      width: ${pageSize.widthPx}px;
       background: #ffffff;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
@@ -66,41 +89,30 @@ app.post('/api/pdf', async (req: any, res: any) => {
       print-color-adjust: exact !important;
     }
 
-    /* ── Entornos continuos y adaptables (permite saltos de página naturales sin saltos en bloque) ── */
-    section,
+    /* ── Paginación ───────────────────────────────────────────────────────
+     * The browser already split the CV into sheets (usePagination): blocks
+     * near a sheet boundary were moved below it with spacers, and the root
+     * is exactly N sheets tall. Printing with zero page margins makes every
+     * PDF page an exact slice of the preview, so no break rule may move
+     * content again here.
+     */
     .cv-preview,
-    .cv-preview section,
-    .cv-entry,
-    .ats-entry,
-    .cv2-section,
-    .cv2-section-body,
-    .cv2-section-body > div {
+    .cv-preview * {
+      break-before: auto !important;
+      break-after: auto !important;
       break-inside: auto !important;
-      page-break-inside: auto !important;
+      orphans: 1 !important;
+      widows: 1 !important;
     }
 
-    /* Evitar títulos huérfanos al final de página */
-    h1, h2, h3, h4,
-    .cv-section-title,
-    .ats-section-title,
-    .cv2-section-label,
-    .cv-entry-header,
-    .cv2-entry-header,
-    .ats-entry-header {
-      break-after: avoid !important;
-      page-break-after: avoid !important;
+    /* Empty-field hints are a preview aid; hidden (not removed) so the layout the browser paginated is kept */
+    .cv-placeholder {
+      visibility: hidden !important;
     }
 
-    /* Viñetas e ítems atómicos: no se parten por la mitad de una línea */
-    li,
-    tr {
-      break-inside: avoid !important;
-      page-break-inside: avoid !important;
-    }
-
-    p {
-      orphans: 2;
-      widows: 2;
+    @page {
+      size: ${pageSize.widthPx}px ${pageSize.heightPx}px;
+      margin: 0;
     }
   </style>
 
@@ -113,7 +125,7 @@ app.post('/api/pdf', async (req: any, res: any) => {
 </html>`
 
     await page.setContent(fullHtml, {
-      waitUntil: 'networkidle0',
+      waitUntil: 'load',
       timeout: 45000,
     })
 
@@ -124,14 +136,15 @@ app.post('/api/pdf', async (req: any, res: any) => {
     await new Promise(r => setTimeout(r, 200))
 
     const pdfBuffer = await page.pdf({
-      format: 'Letter',
+      width: `${pageSize.widthPx}px`,
+      height: `${pageSize.heightPx}px`,
       printBackground: true,
-      // Margen superior de 10mm (garantiza respiro en página 2+) y margen inferior de 14mm (~53px de espacio formal al pie)
-      margin: { top: '10mm', right: '0mm', bottom: '14mm', left: '0mm' },
-      preferCSSPageSize: false,
+      // Sheet margins live inside the CV itself (see the @page rule above)
+      margin: { top: '0mm', right: '0mm', bottom: '0mm', left: '0mm' },
+      preferCSSPageSize: true,
     })
 
-    const safeName = (filename as string).replace(/[^a-z0-9_-]/gi, '_').toLowerCase()
+    const safeName = toSafeFilename(String(filename))
 
     res.set({
       'Content-Type': 'application/pdf',
@@ -148,7 +161,7 @@ app.post('/api/pdf', async (req: any, res: any) => {
   }
 })
 
-app.get('/health', (_req: any, res: any) => res.json({ ok: true, server: 'PDF Puppeteer' }))
+app.get('/health', (_req: Request, res: Response) => res.json({ ok: true, server: 'PDF Puppeteer' }))
 
 app.listen(PORT, () => {
   console.log(`\n✅ PDF server running at http://localhost:${PORT}\n`)

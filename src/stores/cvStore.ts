@@ -1,18 +1,29 @@
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import {
   type CVData,
   type TemplateVariant,
   type AppLanguage,
+  type CVTypography,
+  DEFAULT_TYPOGRAPHY,
+  LANGUAGE_LEVELS,
   createEmptyCV,
   createExperienceEntry,
   createEducationEntry,
   createAchievement,
+  createCertification,
   createPublication,
   createLanguageEntry,
 } from '@/types/cv.types'
 
 const STORAGE_KEY = 'cvjob_data'
+
+/** Lists whose entries carry an id and can be reordered, removed and restored */
+export type EntryListKey = 'experience' | 'education' | 'achievements' | 'certifications' | 'languages' | 'publications'
+
+/** "Present" as an end date is written in the language of the CV */
+const PRESENT_WORD: Record<AppLanguage, string> = { es: 'Presente', en: 'Present' }
+const PRESENT_PATTERN = /^(presente|present)$/i
 
 export const useCVStore = defineStore('cv', () => {
   // ── State ─────────────────────────────────────────────────────────────────
@@ -24,13 +35,25 @@ export const useCVStore = defineStore('cv', () => {
       const raw = localStorage.getItem(STORAGE_KEY)
       if (raw) {
         const parsed = JSON.parse(raw) as CVData
-        // Merge with fresh defaults so newly added fields (e.g. photo) are always present
         const empty = createEmptyCV()
+        const storedTypo = parsed.meta?.typography
+        // 'helvetica' was removed: it rendered as Arial on Windows
+        const storedFont: string | undefined = storedTypo?.fontFamily
+        const fontFamily = !storedTypo
+          ? DEFAULT_TYPOGRAPHY.fontFamily
+          : storedFont === 'helvetica' ? 'arial' : storedTypo.fontFamily
+
         return {
           ...empty,
           ...parsed,
-          personal: { ...empty.personal, ...parsed.personal },
-          meta:     { ...empty.meta,     ...parsed.meta },
+          personal:       { ...empty.personal, ...parsed.personal },
+          meta:           {
+            ...empty.meta,
+            ...parsed.meta,
+            // Backwards-compat: old CVs won't have typography
+            typography: { ...DEFAULT_TYPOGRAPHY, ...(storedTypo ?? {}), fontFamily },
+          },
+          certifications: parsed.certifications ?? [],
         }
       }
     } catch {
@@ -39,15 +62,91 @@ export const useCVStore = defineStore('cv', () => {
     return createEmptyCV()
   }
 
+  /** True when the last auto-save was rejected (browser storage full or blocked) */
+  const saveFailed = ref(false)
+
+  // Stamping lastModified changes the CV, which fires the auto-save watcher
+  // again: the content snapshot lets that second run stop instead of saving twice.
+  let savedSnapshot = ''
+
   function saveToStorage() {
+    const snapshot = JSON.stringify({ ...cv.value, meta: { ...cv.value.meta, lastModified: '' } })
+    if (snapshot === savedSnapshot) return
+    savedSnapshot = snapshot
     cv.value.meta.lastModified = new Date().toISOString()
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(cv.value))
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cv.value))
+      saveFailed.value = false
+    } catch {
+      saveFailed.value = true
+    }
   }
 
   function resetCV() {
     cv.value = createEmptyCV()
+    lastRemoved.value = null
     saveToStorage()
   }
+
+  /** Whether the user has typed anything worth protecting from an overwrite */
+  const hasContent = computed(() => {
+    const c = cv.value
+    return Boolean(
+      c.personal.fullName.trim() || c.personal.email.trim() || c.summary.trim() ||
+      c.experience.length || c.education.length || c.achievements.length ||
+      c.certifications?.length || c.languages.length || c.publications.length ||
+      c.skills.some(s => s.trim()) || c.programs.some(p => p.trim()),
+    )
+  })
+
+  // ── Entry lists: remove with undo, reorder ────────────────────────────────
+  const lastRemoved = ref<{ list: EntryListKey; index: number; item: unknown } | null>(null)
+
+  function removeEntry(list: EntryListKey, id: string) {
+    const items = (cv.value[list] ?? []) as { id: string }[]
+    const index = items.findIndex(i => i.id === id)
+    if (index < 0) return
+    const [item] = items.splice(index, 1)
+    lastRemoved.value = { list, index, item }
+  }
+
+  function undoRemove() {
+    const removed = lastRemoved.value
+    if (!removed) return
+    const items = cv.value[removed.list] as unknown[]
+    items.splice(Math.min(removed.index, items.length), 0, removed.item)
+    lastRemoved.value = null
+  }
+
+  function dismissUndo() {
+    lastRemoved.value = null
+  }
+
+  /** Moves an entry one position up (-1) or down (1) within its list */
+  function moveEntry(list: EntryListKey, id: string, offset: -1 | 1) {
+    const items = (cv.value[list] ?? []) as { id: string }[]
+    const from = items.findIndex(i => i.id === id)
+    const to = from + offset
+    if (from < 0 || to < 0 || to >= items.length) return
+    const [item] = items.splice(from, 1)
+    items.splice(to, 0, item!)
+  }
+
+  /** Rewrites "Present" end dates and standard language levels in the CV language */
+  function syncLocalizedWords() {
+    const lang = cv.value.meta.language
+    const word = PRESENT_WORD[lang]
+    for (const entry of cv.value.experience) {
+      if (PRESENT_PATTERN.test(entry.endDate.trim()) && entry.endDate !== word) entry.endDate = word
+    }
+    for (const entry of cv.value.languages) {
+      for (const levels of Object.values(LANGUAGE_LEVELS)) {
+        const position = levels.indexOf(entry.level)
+        if (position >= 0) entry.level = LANGUAGE_LEVELS[lang][position]!
+      }
+    }
+  }
+  syncLocalizedWords()
 
   // Auto-save on every change
   watch(cv, saveToStorage, { deep: true })
@@ -59,6 +158,15 @@ export const useCVStore = defineStore('cv', () => {
 
   function setLanguage(lang: AppLanguage) {
     cv.value.meta.language = lang
+    syncLocalizedWords()
+  }
+
+  function setTypography(partial: Partial<CVTypography>) {
+    cv.value.meta.typography = {
+      ...DEFAULT_TYPOGRAPHY,
+      ...cv.value.meta.typography,
+      ...partial,
+    }
   }
 
   // ── Experience ────────────────────────────────────────────────────────────
@@ -67,7 +175,7 @@ export const useCVStore = defineStore('cv', () => {
   }
 
   function removeExperience(id: string) {
-    cv.value.experience = cv.value.experience.filter((e) => e.id !== id)
+    removeEntry('experience', id)
   }
 
   function addBullet(experienceId: string) {
@@ -86,16 +194,7 @@ export const useCVStore = defineStore('cv', () => {
   }
 
   function removeEducation(id: string) {
-    cv.value.education = cv.value.education.filter((e) => e.id !== id)
-  }
-
-  // ── Skills ────────────────────────────────────────────────────────────────
-  function addSkill() {
-    cv.value.skills.push('')
-  }
-
-  function removeSkill(index: number) {
-    cv.value.skills.splice(index, 1)
+    removeEntry('education', id)
   }
 
   // ── Achievements ──────────────────────────────────────────────────────────
@@ -104,16 +203,17 @@ export const useCVStore = defineStore('cv', () => {
   }
 
   function removeAchievement(id: string) {
-    cv.value.achievements = cv.value.achievements.filter((a) => a.id !== id)
+    removeEntry('achievements', id)
   }
 
-  // ── Programs ──────────────────────────────────────────────────────────────
-  function addProgram() {
-    cv.value.programs.push('')
+  // ── Certifications ────────────────────────────────────────────────────────
+  function addCertification() {
+    if (!cv.value.certifications) cv.value.certifications = []
+    cv.value.certifications.push(createCertification())
   }
 
-  function removeProgram(index: number) {
-    cv.value.programs.splice(index, 1)
+  function removeCertification(id: string) {
+    removeEntry('certifications', id)
   }
 
   // ── Languages ─────────────────────────────────────────────────────────────
@@ -122,7 +222,7 @@ export const useCVStore = defineStore('cv', () => {
   }
 
   function removeLanguage(id: string) {
-    cv.value.languages = cv.value.languages.filter((l) => l.id !== id)
+    removeEntry('languages', id)
   }
 
   // ── Publications ──────────────────────────────────────────────────────────
@@ -131,16 +231,18 @@ export const useCVStore = defineStore('cv', () => {
   }
 
   function removePublication(id: string) {
-    cv.value.publications = cv.value.publications.filter((p) => p.id !== id)
+    removeEntry('publications', id)
   }
 
   function loadSampleData() {
+    lastRemoved.value = null
     cv.value = {
       meta: {
         id: 'sample-cv',
         language: cv.value.meta.language,
         template: cv.value.meta.template,
         lastModified: new Date().toISOString(),
+        typography: { ...DEFAULT_TYPOGRAPHY, ...(cv.value.meta.typography ?? {}) },
       },
       personal: {
         fullName: 'CARLOS ALBERTO MENDOZA',
@@ -246,28 +348,53 @@ export const useCVStore = defineStore('cv', () => {
           doi: '10.1016/j.laae.2022.04.011',
         },
       ],
+      certifications: [
+        {
+          id: 'cert-1',
+          name: 'Professional Scrum Master I (PSM I)',
+          issuer: 'Scrum.org',
+          date: '2022',
+          expiration: '',
+          credentialId: 'PSM-I-982741',
+          url: 'https://www.scrum.org/certificates',
+        },
+        {
+          id: 'cert-2',
+          name: 'Google Data Analytics Professional Certificate',
+          issuer: 'Google / Coursera',
+          date: '2021',
+          expiration: '',
+          credentialId: 'GDAT-2021-88421',
+          url: 'https://coursera.org/verify/professional-cert/GDAT2021',
+        },
+      ],
     }
     saveToStorage()
   }
 
   return {
     cv,
+    hasContent,
+    saveFailed,
+    lastRemoved,
+    undoRemove,
+    dismissUndo,
+    moveEntry,
     resetCV,
     loadSampleData,
     setTemplate,
     setLanguage,
+    setTypography,
     addExperience,
     removeExperience,
     addBullet,
     removeBullet,
     addEducation,
     removeEducation,
-    addSkill,
-    removeSkill,
     addAchievement,
     removeAchievement,
-    addProgram,
-    removeProgram,
+    addCertification,
+    removeCertification,
     addLanguage,
     removeLanguage,
     addPublication,

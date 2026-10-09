@@ -1,13 +1,13 @@
 <template>
   <div class="space-y-4">
     <h2 class="section-title">{{ t('sections.programs') }}</h2>
-    <div class="space-y-2">
-      <div v-for="(prog, idx) in cv.programs" :key="idx" class="flex gap-2">
-        <input v-model="cv.programs[idx]" type="text" class="form-input flex-1" placeholder="Power BI" />
-        <button @click="store.removeProgram(idx)" class="text-gray-400 hover:text-red-500 text-sm px-2">✕</button>
-      </div>
-    </div>
-    <button @click="store.addProgram()" class="btn-add">{{ t('actions.addProgram') }}</button>
+    <p class="text-xs text-gray-400">{{ t('editor.programsHint') }}</p>
+    <TagListEditor
+      v-model="cv.programs"
+      :label="t('fields.program')"
+      :add-label="t('actions.addProgram')"
+      placeholder="Power BI"
+    />
   </div>
 </template>
 
@@ -15,8 +15,8 @@
 import { useI18n } from 'vue-i18n'
 import { useCVStore } from '@/stores/cvStore'
 import { storeToRefs } from 'pinia'
+import TagListEditor from '@/components/ui/TagListEditor.vue'
 
 const { t } = useI18n()
-const store = useCVStore()
-const { cv } = storeToRefs(store)
+const { cv } = storeToRefs(useCVStore())
 </script>

@@ -5,25 +5,24 @@
     · Fuente sans-serif (Inter)
     · Margen superior amplio (área de descanso visual)
     · Cabecera: nombre grande izquierda, contacto en cursiva a la derecha
-    · Cuerpo: dos columnas asimétricas — título de sección (20%) | contenido (80%)
-    · Separadores: línea gris claro únicamente bajo la columna de contenido
+    · Cuerpo, dos variantes según la prop `stacked`:
+        - Elegante 2 (por defecto): título de sección a la izquierda (22%) | contenido (78%)
+        - Elegante 3 (stacked): título de sección sobre su contenido, a todo el ancho
+    · Separadores: línea gris claro bajo el contenido de cada sección
     · Tipografía jerárquica en gris (oscuro, claro, regular) según nivel
   -->
   <div
     class="cv-preview bg-white"
-    style="
-      width: 816px;
-      min-height: 1056px;
-      font-family: 'Inter', 'Segoe UI', Arial, Helvetica, sans-serif;
-      font-size: 10.5px;
-      color: #2d2d2d;
-      padding: 0 54px 60px 54px;
-      box-sizing: border-box;
-    "
+    :class="{ 'cv2-side': !stacked }"
+    :style="[
+      {
+        padding: '44px 54px 60px 54px',
+        color: '#2d2d2d',
+        boxSizing: 'border-box'
+      },
+      cssVars
+    ]"
   >
-
-    <!-- ══════════════ MARGEN SUPERIOR EN BLANCO ══════════════ -->
-    <div style="height: 46px;"></div>
 
     <!-- ══════════════ CABECERA ══════════════════════════════ -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
@@ -50,7 +49,7 @@
         <!-- Nombre + Cargo -->
         <div>
           <h1 style="
-            font-size: 34px;
+            font-size: calc(34px * var(--cv-scale, 1));
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.04em;
@@ -59,9 +58,9 @@
             color: #1a1a1a;
             word-break: normal;
             overflow-wrap: normal;
-          ">{{ cv.personal.fullName || 'NOMBRE APELLIDO' }}</h1>
+          "><template v-if="cv.personal.fullName">{{ cv.personal.fullName }}</template><span v-else class="cv-placeholder">NOMBRE APELLIDO</span></h1>
           <p v-if="cv.personal.title" style="
-            font-size: 11px;
+            font-size: calc(11px * var(--cv-scale, 1));
             font-weight: 400;
             text-transform: uppercase;
             letter-spacing: 0.08em;
@@ -77,7 +76,7 @@
       <div style="
         text-align: right;
         font-style: italic;
-        font-size: 9.5px;
+        font-size: calc(max(9.5px, var(--cv2-min-size, 0px)) * var(--cv-scale, 1));
         color: #555;
         line-height: 1.7;
         flex-shrink: 0;
@@ -85,16 +84,16 @@
       ">
         <div v-if="cv.personal.phone">{{ cv.personal.phone }}</div>
         <div v-if="cv.personal.location">{{ cv.personal.location }}</div>
-        <div v-if="cv.personal.email" style="color: #3a6fa8;">{{ cv.personal.email }}</div>
-        <div v-if="cv.personal.linkedin" style="color: #3a6fa8; font-size: 9px;">{{ cv.personal.linkedin }}</div>
-        <div v-if="cv.personal.website" style="color: #3a6fa8; font-size: 9px;">{{ cv.personal.website }}</div>
+        <div v-if="cv.personal.email" style="color: #3a6fa8;"><a :href="'mailto:' + cv.personal.email">{{ cv.personal.email }}</a></div>
+        <div v-if="cv.personal.linkedin" style="color: #3a6fa8; font-size: calc(max(9px, var(--cv2-min-size, 0px)) * var(--cv-scale, 1));"><a :href="toUrl(cv.personal.linkedin)" target="_blank" rel="noopener noreferrer">{{ cv.personal.linkedin }}</a></div>
+        <div v-if="cv.personal.website" style="color: #3a6fa8; font-size: calc(max(9px, var(--cv2-min-size, 0px)) * var(--cv-scale, 1));"><a :href="toUrl(cv.personal.website)" target="_blank" rel="noopener noreferrer">{{ cv.personal.website }}</a></div>
       </div>
     </div>
 
     <!-- Línea divisoria inferior de cabecera -->
     <div style="border-top: 1px solid #bbb; margin-bottom: 22px;"></div>
 
-    <!-- ══════════════ CUERPO: DOS COLUMNAS ══════════════════ -->
+    <!-- ══════════════ CUERPO ══════════════════ -->
 
     <!-- PERFIL -->
     <section v-if="cv.summary" class="cv2-section">
@@ -116,14 +115,12 @@
         >
           <div class="cv2-entry-header">
             <!-- Nivel 1: Empresa -->
-            <p style="margin: 0 0 1px; font-weight: 700; color: #888; font-size: 10.5px;">
-              {{ exp.company }}<span v-if="exp.location" style="font-weight: 400; color: #aaa;"> — {{ exp.location }}</span>
+            <p class="cv2-level1" style="margin: 0 0 1px; font-weight: 700; color: #888; font-size: calc(10.5px * var(--cv-scale, 1));">
+              {{ exp.company }}<span v-if="exp.location" class="cv2-level1-meta" style="font-weight: 400; color: #aaa;"> — {{ exp.location }}</span>
             </p>
             <!-- Nivel 2: Cargo | Fechas -->
-            <p style="margin: 0 0 4px; font-weight: 700; color: #2d2d2d; font-size: 10.5px;">
-              {{ exp.role }}
-              <span v-if="exp.startDate || exp.endDate" style="font-weight: 400; color: #2d2d2d;">
-                &nbsp;|&nbsp;{{ exp.startDate }}<span v-if="exp.endDate"> – {{ exp.endDate }}</span>
+            <p style="margin: 0 0 4px; font-weight: 700; color: #2d2d2d; font-size: calc(10.5px * var(--cv-scale, 1));">
+              {{ exp.role }}<span v-if="exp.startDate || exp.endDate" style="font-weight: 400; color: #2d2d2d;"> | {{ exp.startDate }}<span v-if="exp.endDate"> - {{ exp.endDate }}</span>
               </span>
             </p>
           </div>
@@ -132,7 +129,7 @@
             <li
               v-for="(b, i) in exp.bullets.filter(b => b.trim())"
               :key="i"
-              style="margin-bottom: 2px; line-height: 1.55; color: #333; font-size: 10.5px; text-align: justify;"
+              style="margin-bottom: 2px; line-height: 1.55; color: #333; font-size: calc(10.5px * var(--cv-scale, 1)); text-align: justify;"
             >{{ b }}</li>
           </ul>
         </div>
@@ -151,17 +148,17 @@
         >
           <div class="cv2-entry-header">
             <!-- Nivel 1: Título -->
-            <p style="margin: 0 0 1px; font-weight: 700; color: #888; font-size: 10.5px;">{{ edu.degree }}<span v-if="edu.field"> — {{ edu.field }}</span></p>
+            <p class="cv2-level1" style="margin: 0 0 1px; font-weight: 700; color: #888; font-size: calc(10.5px * var(--cv-scale, 1));">{{ edu.degree }}<span v-if="edu.field"> — {{ edu.field }}</span></p>
             <!-- Nivel 2: Institución (cursiva) | Fecha, Ciudad -->
-            <p style="margin: 0; font-size: 10.5px; color: #2d2d2d;">
+            <p style="margin: 0; font-size: calc(10.5px * var(--cv-scale, 1)); color: #2d2d2d;">
               <em>{{ edu.institution }}</em>
               <span v-if="edu.graduationDate || edu.location">
                 &nbsp;|&nbsp;<span style="font-style: normal;">{{ edu.graduationDate }}<span v-if="edu.location">, {{ edu.location }}</span></span>
               </span>
             </p>
           </div>
-          <p v-if="edu.honors" style="margin: 2px 0 0; font-size: 9.5px; color: #888; font-style: italic;">{{ edu.honors }}</p>
-          <p v-if="edu.thesis" style="margin: 2px 0 0; font-size: 9.5px; color: #666;">Tesis: <em>{{ edu.thesis }}</em></p>
+          <p v-if="edu.honors" style="margin: 2px 0 0; font-size: calc(max(9.5px, var(--cv2-min-size, 0px)) * var(--cv-scale, 1)); color: #888; font-style: italic;">{{ edu.honors }}</p>
+          <p v-if="edu.thesis" style="margin: 2px 0 0; font-size: calc(max(9.5px, var(--cv2-min-size, 0px)) * var(--cv-scale, 1)); color: #666;">{{ t('preview.thesis') }}: <em>{{ edu.thesis }}</em></p>
         </div>
         <div class="cv2-divider"></div>
       </div>
@@ -187,17 +184,17 @@
           :key="ach.id"
           :style="{ marginBottom: idx < cv.achievements.length - 1 ? '14px' : '0' }"
         >
-          <p style="margin: 0 0 1px; font-weight: 700; color: #888; font-size: 10.5px;">
-            {{ ach.organization }}<span v-if="ach.year" style="font-weight:400; color:#aaa;"> — {{ ach.year }}</span>
+          <p class="cv2-level1" style="margin: 0 0 1px; font-weight: 700; color: #888; font-size: calc(10.5px * var(--cv-scale, 1));">
+            {{ ach.organization }}<span v-if="ach.year" class="cv2-level1-meta" style="font-weight:400; color:#aaa;"> — {{ ach.year }}</span>
           </p>
-          <p style="margin: 0 0 3px; font-weight: 700; color: #2d2d2d; font-size: 10.5px;">{{ ach.title }}</p>
-          <p v-if="ach.description" style="margin: 0; color: #333; line-height: 1.5; font-size: 10.5px;">{{ ach.description }}</p>
+          <p style="margin: 0 0 3px; font-weight: 700; color: #2d2d2d; font-size: calc(10.5px * var(--cv-scale, 1));">{{ ach.title }}</p>
+          <p v-if="ach.description" style="margin: 0; color: #333; line-height: 1.5; font-size: calc(10.5px * var(--cv-scale, 1));">{{ ach.description }}</p>
         </div>
         <div class="cv2-divider"></div>
       </div>
     </section>
 
-    <!-- PROGRAMAS Y SOFTWARE -->
+    <!-- COMPETENCIAS TÉCNICAS (PROGRAMAS) -->
     <section v-if="cv.programs.filter(p => p.trim()).length" class="cv2-section">
       <div class="cv2-section-label">{{ t('sections.programs') }}</div>
       <div class="cv2-section-body">
@@ -208,12 +205,37 @@
       </div>
     </section>
 
+    <!-- CERTIFICACIONES Y CURSOS -->
+    <section v-if="cv.certifications && cv.certifications.length" class="cv2-section">
+      <div class="cv2-section-label">{{ t('sections.certifications') }}</div>
+      <div class="cv2-section-body">
+        <div
+          v-for="(cert, idx) in cv.certifications"
+          :key="cert.id"
+          :style="{ marginBottom: idx < cv.certifications.length - 1 ? '12px' : '0' }"
+        >
+          <p class="cv2-level1" style="margin: 0 0 1px; font-weight: 700; color: #888; font-size: calc(10.5px * var(--cv-scale, 1));">
+            {{ cert.issuer }}<span v-if="cert.date" class="cv2-level1-meta" style="font-weight:400; color:#aaa;"> — {{ cert.date }}<span v-if="cert.expiration"> - {{ cert.expiration }}</span></span>
+          </p>
+          <p style="margin: 0 0 2px; font-weight: 700; color: #2d2d2d; font-size: calc(10.5px * var(--cv-scale, 1));">
+            {{ cert.name }}
+          </p>
+          <p v-if="cert.credentialId || cert.url" style="margin: 0; color: #666; font-size: calc(max(9.5px, var(--cv2-min-size, 0px)) * var(--cv-scale, 1));">
+            <span v-if="cert.credentialId">ID: {{ cert.credentialId }}</span>
+            <span v-if="cert.credentialId && cert.url"> · </span>
+            <span v-if="cert.url" style="color: #3a6fa8;"><a :href="toUrl(cert.url)" target="_blank" rel="noopener noreferrer">{{ cert.url }}</a></span>
+          </p>
+        </div>
+        <div class="cv2-divider"></div>
+      </div>
+    </section>
+
     <!-- IDIOMAS -->
     <section v-if="cv.languages.length" class="cv2-section">
       <div class="cv2-section-label">{{ t('sections.languages') }}</div>
       <div class="cv2-section-body">
         <div style="line-height: 1.6; color: #333;">
-          <div v-for="lang in cv.languages" :key="lang.id" style="font-size: 10.5px;">
+          <div v-for="lang in cv.languages" :key="lang.id" style="font-size: calc(10.5px * var(--cv-scale, 1));">
             {{ lang.name }}: {{ lang.level }}
           </div>
         </div>
@@ -228,7 +250,7 @@
         <div
           v-for="(pub, idx) in cv.publications"
           :key="pub.id"
-          :style="{ marginBottom: idx < cv.publications.length - 1 ? '8px' : '0', lineHeight: '1.5', fontSize: '10.5px', color: '#333' }"
+          :style="{ marginBottom: idx < cv.publications.length - 1 ? '8px' : '0', lineHeight: '1.5', fontSize: 'calc(10.5px * var(--cv-scale, 1))', color: '#333' }"
         >
           {{ pub.authors }} ({{ pub.year }}). <em>{{ pub.title }}</em>. {{ pub.journal }}<span v-if="pub.doi">. DOI: {{ pub.doi }}</span>.
         </div>
@@ -242,53 +264,77 @@
 import { useI18n } from 'vue-i18n'
 import { useCVStore } from '@/stores/cvStore'
 import { storeToRefs } from 'pinia'
+import { useTypographyStyles } from '@/composables/useTypographyStyles'
+import { toUrl } from '@/utils/url'
 
 const { t } = useI18n()
 const store = useCVStore()
 const { cv } = storeToRefs(store)
+const { cssVars } = useTypographyStyles()
+
+defineProps<{
+  /** Section titles above their content instead of in a left column */
+  stacked?: boolean
+}>()
 </script>
 
 <style scoped>
-/* ── Two-column section row — Flowing Block (permite saltos de página continuos) ── */
+/* Each section is a title on its own line followed by its content */
 .cv2-section {
   display: block;
-  position: relative;
-  break-inside: auto;
-  page-break-inside: auto;
 }
-.cv2-section::after {
+
+.cv2-section-label {
+  font-size: calc(10px * var(--cv-scale, 1));
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #1a1a1a;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+/* Side layout (Elegante 2): titles float in a left column beside the content */
+.cv2-side .cv2-section {
+  /* Keeps each floated title next to its own content in the PDF text order */
+  position: relative;
+}
+
+.cv2-side .cv2-section::after {
   content: "";
   display: table;
   clear: both;
 }
 
-/* Left column: section title label — 22% width floated left */
-/* padding-top aligns label baseline with first line of content text */
-.cv2-section-label {
+.cv2-side .cv2-section-label {
   float: left;
   width: 22%;
+  /* aligns the label with the first line of content */
   padding-top: 2px;
   padding-right: 20px;
-  font-size: 8.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: #1a1a1a;
-  line-height: 1.4;
-  break-after: avoid;
-  page-break-after: avoid;
+  margin-bottom: 0;
+  font-size: calc(max(8.5px, var(--cv2-min-size, 0px)) * var(--cv-scale, 1));
 }
 
-/* Right column: content — 78% width with margin-left */
-.cv2-section-body {
+.cv2-side .cv2-section-body {
   margin-left: 22%;
-  break-inside: auto;
-  page-break-inside: auto;
 }
-.cv2-section-body > div {
-  break-inside: auto;
-  page-break-inside: auto;
+
+/* Stacked layout (Elegante 3): readable sizes, stronger entry titles, ragged-right text */
+.cv-preview:not(.cv2-side) {
+  --cv2-min-size: 10px;
 }
+.cv-preview:not(.cv2-side) .cv2-level1 {
+  color: #444 !important;
+}
+.cv-preview:not(.cv2-side) .cv2-level1-meta {
+  color: #777 !important;
+}
+.cv-preview:not(.cv2-side) p,
+.cv-preview:not(.cv2-side) li {
+  text-align: left !important;
+}
+
 .cv2-entry-header {
   break-inside: avoid;
   break-after: avoid;
@@ -300,7 +346,7 @@ li {
 }
 
 /*
-  Thin gray divider — only spans the right (content) column.
+  Thin gray divider between sections.
   margin-top  = space between last content item and the line
   margin-bottom = space between line and next section's content
 */

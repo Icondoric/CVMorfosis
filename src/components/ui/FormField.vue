@@ -7,7 +7,7 @@
     >
       {{ label }}
       <span v-if="required" class="text-[var(--apple-red)] ml-0.5" aria-hidden="true">*</span>
-      <span v-if="required" class="sr-only">(campo obligatorio)</span>
+      <span v-if="required" class="sr-only">{{ t('editor.required') }}</span>
     </label>
     <slot :id="inputId" />
   </div>
@@ -15,6 +15,9 @@
 
 <script setup lang="ts">
 import { useId } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   id?: string

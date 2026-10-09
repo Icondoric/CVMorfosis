@@ -9,36 +9,42 @@
     >
       <div class="entry-header">
         <span class="entry-index">{{ idx + 1 }}</span>
-        <button @click="store.removeEducation(entry.id)" class="btn-remove">✕</button>
+        <EntryControls
+          :index="idx"
+          :count="cv.education.length"
+          @up="store.moveEntry('education', entry.id, -1)"
+          @down="store.moveEntry('education', entry.id, 1)"
+          @remove="store.removeEducation(entry.id)"
+        />
       </div>
 
-      <div class="grid grid-cols-2 gap-3">
-        <FormField :label="t('fields.institution')" class="col-span-2" required>
-          <input v-model="entry.institution" type="text" class="form-input" placeholder="Universidad Nacional de Colombia" />
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <FormField :label="t('fields.institution')" class="sm:col-span-2" required v-slot="{ id }">
+          <input :id="id" v-model="entry.institution" type="text" class="form-input" placeholder="Universidad Nacional de Colombia" />
         </FormField>
 
-        <FormField :label="t('fields.degree')" required>
-          <input v-model="entry.degree" type="text" class="form-input" placeholder="Maestría en Administración" />
+        <FormField :label="t('fields.degree')" required v-slot="{ id }">
+          <input :id="id" v-model="entry.degree" type="text" class="form-input" placeholder="Maestría en Administración" />
         </FormField>
 
-        <FormField :label="t('fields.field')">
-          <input v-model="entry.field" type="text" class="form-input" placeholder="Ciencias Económicas" />
+        <FormField :label="t('fields.field')" v-slot="{ id }">
+          <input :id="id" v-model="entry.field" type="text" class="form-input" placeholder="Ciencias Económicas" />
         </FormField>
 
-        <FormField :label="t('fields.graduationDate')" required>
-          <input v-model="entry.graduationDate" type="text" class="form-input" placeholder="Mayo 2022" />
+        <FormField :label="t('fields.graduationDate')" required v-slot="{ id }">
+          <DateField :id="id" v-model="entry.graduationDate" />
         </FormField>
 
-        <FormField :label="t('fields.location')">
-          <input v-model="entry.location" type="text" class="form-input" placeholder="Bogotá, COL" />
+        <FormField :label="t('fields.location')" v-slot="{ id }">
+          <input :id="id" v-model="entry.location" type="text" class="form-input" placeholder="Bogotá, COL" />
         </FormField>
 
-        <FormField :label="t('fields.honors')" class="col-span-2">
-          <input v-model="entry.honors" type="text" class="form-input" placeholder="Cum Laude" />
+        <FormField :label="t('fields.honors')" class="sm:col-span-2" v-slot="{ id }">
+          <input :id="id" v-model="entry.honors" type="text" class="form-input" placeholder="Cum Laude" />
         </FormField>
 
-        <FormField :label="t('fields.thesis')" class="col-span-2">
-          <AutoExpandTextarea v-model="entry.thesis" :min-rows="1" placeholder="Título de la tesis (opcional)" />
+        <FormField :label="t('fields.thesis')" class="sm:col-span-2" v-slot="{ id }">
+          <AutoExpandTextarea :id="id" v-model="entry.thesis" :min-rows="1" :placeholder="t('fields.thesis')" />
         </FormField>
       </div>
     </div>
@@ -54,6 +60,8 @@ import { useI18n } from 'vue-i18n'
 import { useCVStore } from '@/stores/cvStore'
 import { storeToRefs } from 'pinia'
 import FormField from '@/components/ui/FormField.vue'
+import EntryControls from '@/components/ui/EntryControls.vue'
+import DateField from '@/components/ui/DateField.vue'
 import AutoExpandTextarea from '@/components/ui/AutoExpandTextarea.vue'
 
 const { t } = useI18n()
